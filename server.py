@@ -36,14 +36,12 @@ def get_freqs():
     # get frequencies in hz out of db
     table_freqs = Frequency.query.all()
     frequencies = {}
+    freq_list = []
 
     for freq in table_freqs:
         new_freq = freq.freq_hz
-  
-    # unpack tuple with freq in hz
-
-    # put frequencies in dict with one key (frequencies)
-    # return jsonify of dictionary
+        freq_list.append(new_freq)
+    frequencies['frequency'] = freq_list
     return jsonify(frequencies)
 
 
