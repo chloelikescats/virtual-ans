@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block head %}
+<script src="/static/js/flocking/flocking-all.js"></script>
+<script src="/static/js/virtual_ans.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<button id="myButton">Play It!</button>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script>
+$('#myButton').on('click', function () {
+    var environment = flock.init();
+    environment.start();
+    virtual_ans.play();
+});
+</script>
+
+{% endblock %}

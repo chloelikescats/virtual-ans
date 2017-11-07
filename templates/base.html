@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <title>Virtual ANS</title>
+  {% block head %} put things needed in head here {% endblock %}
+</head>
+
+<body>
+  <h1>Virtual ANS</h1>
+  {% if 'user_id' in session %}
+    <form action="/logout" method="POST">
+      <input type="submit" id="logout" value="Log Out">
+    </form>
+  {% else %}
+    <a href="/login">Log In</a>
+    <br>
+    <a href="/register">Register</a>
+  {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+         {% if messages %}
+            <ul style="list-style-type: none; color: red;">
+               {% for message in messages %}
+               <li>{{ message }}</li>
+               {% endfor %}
+            </ul>
+         {% endif %}
+    {% endwith %}
+
+  {% block content %} put your content here {% endblock %}
+
+</body>
+</html>
