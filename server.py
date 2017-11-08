@@ -33,8 +33,22 @@ def index():
 
 @app.route('/frequencies.json')
 def jsonify_freqs():
+    """Jsonify frequencies for Flocking"""
     frequencies = get_freqs()
     return jsonify(frequencies)
+
+@app.route('/upload-image', methods=["GET"])
+def upload_image():
+    """Upload image via form"""
+    return render_template("homepage.html")
+
+@app.route('/process-image', methods=["POST"])
+def process_image():
+    """Convert and analyze image, add to DB"""
+    img_url = request.form.get("pic")
+    convert_resize_image(img_url)
+    img = Image.query.filter(Image.img_url == img_url).first()
+    pillow_analyze_image(img)
 
 
 @app.route('/register', methods=["GET"])
@@ -133,8 +147,13 @@ def convert_resize_image(img_url):
     img = img.resize((width_size, baseheight), PIL.Image.ANTIALIAS)
     img.save(img_url)
 
+    if 'user_id' in session:
+        user_id = session['user_id']
+    else:
+        user_id = None
+
     new_img = Image(img_url=img_url,
-                    # user_id=user_id,
+                    user_id=user_id,
                     private=private)
  
     db.session.add(new_img)

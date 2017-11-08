@@ -13,17 +13,15 @@
 $('#myButton').on('click', function () {
     var environment = flock.init();
     environment.start();
-    // octave_1.play();
-    // octave_2.play();
-    // octave_3.play();
-    octave_4.play();
-    octave_5.play();
-    // octave_6.play();
-    // octave_7.play();
-    octave_8.play();
-    // octave_9.play();
-    // octave_10.play();
+    virtual_ans.play();
 });
 </script>
+<br>
+<br>
+<form action="/upload-image">
+    <input type="file" name ="pic" accept="image/*">
+    <br>
+    <input type="submit">
+</form>
 
 {% endblock %}
