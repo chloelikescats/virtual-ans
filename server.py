@@ -32,16 +32,8 @@ def index():
 
 
 @app.route('/frequencies.json')
-def get_freqs():
-    # get frequencies in hz out of db
-    table_freqs = Frequency.query.all()
-    frequencies = {}
-    freq_list = []
-
-    for freq in table_freqs:
-        new_freq = freq.freq_hz
-        freq_list.append(new_freq)
-    frequencies['frequency'] = freq_list
+def jsonify_freqs():
+    frequencies = get_freqs()
     return jsonify(frequencies)
 
 
@@ -115,6 +107,20 @@ def logout():
 
 #*****************************************************#
 # Logic
+
+def get_freqs():
+    # get frequencies in hz out of db
+    table_freqs = Frequency.query.all()
+    frequencies = {}
+    freq_list = []
+
+    for freq in table_freqs:
+        new_freq = freq.freq_hz
+        freq_list.append(new_freq)
+
+    frequencies['frequency'] = freq_list
+    return frequencies
+
 
 #Not sure whether or not I want to constrain the width to specified width
 #right now I am scaling width based on set height
