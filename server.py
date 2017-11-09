@@ -22,9 +22,7 @@ app.jinja_env.undefined = StrictUndefined
 
 #*****************************************************#
 # Routes
-"""TO DO:
-    - image upload and processing
-    - 
+"""
 """
 
 @app.route('/')
@@ -156,13 +154,10 @@ def convert_resize_image(img_url):
         user_id = session['user_id']
     else:
         user_id = None
-    # import pdb; pdb.set_trace()
 
     new_img = Image(img_url=img_url,
                     user_id=user_id)
                     # private=private)
-
- 
     db.session.add(new_img)
     db.session.commit()
 
@@ -194,7 +189,8 @@ if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
     app.debug = True
-    app.jinja_env.auto_reload = app.debug  # make sure templates, etc. are not cached in debug mode
+    # make sure templates, etc. are not cached in debug mode
+    app.jinja_env.auto_reload = app.debug  
 
     connect_to_db(app)
 

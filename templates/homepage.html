@@ -6,22 +6,37 @@
 
 {% block content %}
 
-<button id="myButton">Play It!</button>
+<h2>What is the ANS?</h2>
+<p>The ANS synthesizer is a photoelectronic musical instrument created by Russian engineer Evgeny Murzin between 1937 and 1958.
+</p>
+<!-- In front of the glass plate sits a vertical bank of twenty
+photocells that send signals to twenty amplifiers and bandpass filters, each with its own gain adjust control. It is akin to a ten-octave equalizer with two knobs per octave -->
+
+<button id="playButton">Play It!</button>
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script>
-$('#myButton').on('click', function () {
-    var environment = flock.init();
+$('#playButton').on('click', function () {
+    let environment = flock.init();
     environment.start();
     virtual_ans.play();
 });
 </script>
+
+<button id="stopButton">STOP IT!</button>
+
+<script>
+$('#stopButton').on('click', function () {
+    virtual_ans.stop();
+});
+</script>
+
 <br>
 <br>
 <form action="/process-image" enctype="multipart/form-data" method="POST">
-    <input type="file" name ="pic" accept="image/*">
+    <input type="file" name ="pic" accept="image/*"/>
     <br>
-    <input type="submit">
+    <input type="submit"/>
 </form>
 
 {% endblock %}
