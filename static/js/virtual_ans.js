@@ -3,28 +3,14 @@
 - 0-255 (0 is white, 255 is black)
 - Scale amplitude based on 0-255 (0 loudest, 255 silent)
 - Each value represents pixel in row
-- 720 rows, 480 tones
+- 720 rows, 240 tones
 --------------------
-13 tones precede 1st octave
-35 tone preclude 9th octave
-
-- Base pitch corresponds to 1px
-- 1st semitone corresponds to 2px
-- 2nd semitone corresponds to 1px
-- 3rd semitone corresponds to 2px
-
-example:
-C c/1 c/2 c/3 D
-1  2   1   2  1
-
-- 48 discrete oscillators per octave.
+- (formerly 72) 24 discrete oscillators per octave.
 - 2 "photocells" per octave
-- 24 oscillators -> bandpass filter -> amplitude control
+- 12 oscillators -> bandpass filter -> amplitude control
 - 2 bandpass filters/amplitude controls per octave
 */ 
 
-
-let allSynths;
 //AJAX on page load to get frequencies
 $.get("/frequencies.json", generateSynths);
 
@@ -32,45 +18,73 @@ $.get("/frequencies.json", generateSynths);
 function generateSynths(result) {
     let synths = [];
     // console.log(result);
-    frequencyArray = result['frequency']
-     for (let freq_hz in frequencyArray) {
-        // console.log(frequencyArray[freq_hz]);
-        // console.log(label)
+    let frequencyArray = result['frequency']
+
+    count = 1
+    for (let freq_hz in frequencyArray) {
+        synth_id = "sin" + count;
+        console.log(synth_id)
         let sin_osc = {
             synthDef: {
                 ugen: "flock.ugen.sinOsc",
-                id: "sine",
+                // not sure if will work:
+                id: synth_id,
                 freq: frequencyArray[freq_hz],
-                mul: {
-                    ugen: "flock.ugen.line",
-                    start: 0,
-                    end: 0.05,
-                    duration: 5
-                }
+                mul: 0.00
             }
-        };
+
+        }
             synths.push(sin_osc)
+            count += 1
     }
-    allSynths = synths;
-};
+    let allSynths = synths;
+}
 
-
-//200 at a time seems to be the functional limit of the environment
+//250 at a time seems to be the functional limit of the environment
 fluid.registerNamespace("virtual_ans");
 
+// I will want to divide by octave and have seperate play functions with bp filters
     virtual_ans.play = function () {
-        let counter = 100;
-        while (counter < 300){
-            flock.synth(allSynths[counter]);
+        let counter = 0;
+        while (counter < 240){
+            let sin_osc = flock.synth(allSynths[counter]);
             counter+=1;
-        };
+        }
 
     };
 
-    virtual_ans.stop = function () {
-        let counter = 100;
-        while (counter < 300){
-            flock.synth(allSynths[counter]);
-            counter+=1;
-        };
-    };
+// AJAX gets pixel data
+$.get("/pixel_data.json", playSynths);
+// Function that unpacks a column data every second
+function playSynths(result) {
+    let columnArray = result['pixel_column']
+
+    // I want to get next pixelColumn and set muls once every second (for now)
+    let columnNum = 0;
+
+    let interval = setInterval(function () {
+        let pixelColumn = columnArray[columnNum];
+        playPixelColumn(pixelColumn);
+
+        columnNum += 1;
+        if (columnNum > columnArray.length) {
+            clearInterval(interval);
+            //stop environment.
+        }
+    }, 1000)
+
+}
+
+function playPixelColumn(pixelColumn) {
+    count = 1;
+    for (let pixel in pixelColumn) {
+        let newMul = pixel / 5000; /* pixel val: 0-255, mul range: 0.00-0.05 */
+        synth_id = "sin" + count;
+
+        //not sure if setting id this way will work...
+        sin_osc.set(synth_id + ".mul", newMul);
+        count += 1;
+    }
+}
+// Set each synth's mul based on pixel data
+// Once all each column has been played, stop virtual_ans

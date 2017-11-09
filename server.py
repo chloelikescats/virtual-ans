@@ -22,7 +22,12 @@ app.jinja_env.undefined = StrictUndefined
 
 #*****************************************************#
 # Routes
-"""
+"""TO DO:
+- Image library
+- User page / Image Library
+- Select Image and display
+- Play Image
+
 """
 
 @app.route('/')
@@ -36,6 +41,12 @@ def jsonify_freqs():
     """Jsonify frequencies for Flocking"""
     frequencies = get_freqs()
     return jsonify(frequencies)
+
+@app.route('/pixel_data.json')
+def jsonify_pixel_data():
+    #img_id = form.request.get("whatever name")
+    # pixel_data = get_pixel_data(img_id)
+    return jsonify(pixel_data)
 
 @app.route('/upload-image', methods=["GET"])
 def upload_image():
@@ -124,7 +135,7 @@ def logout():
 # Logic
 
 def get_freqs():
-    # get frequencies in hz out of db
+    """Get frequencies in hz out of frequencies."""
     table_freqs = Frequency.query.all()
     frequencies = {}
     freq_list = []
@@ -136,6 +147,19 @@ def get_freqs():
     frequencies['frequency'] = freq_list
     return frequencies
 
+
+def get_pixel_data(img_id):
+    """Get pixel data for each image column out of image_columns"""
+    image_columns = ImageColumn.query.filter(ImageColumn.img_id == img_id).all()
+    columns = {}
+    column_list = []
+
+    for column in image_columns:
+        new_column = column.pixel_array
+        column_list.append(new_column)
+
+    columns['column'] = column_list
+    return columns
 
 #Not sure whether or not I want to constrain the width to specified width
 #right now I am scaling width based on set height
