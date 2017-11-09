@@ -7,10 +7,12 @@ from flask import (Flask, jsonify,
                    flash, session)
 from flask_debugtoolbar import DebugToolbarExtension
 from model import (connect_to_db, db, Frequency, Image, ImageColumn, Heart, User)
-import PIL
-
+from PIL import Image as PILimage
+import os
+UPLOAD_FOLDER = 'static/uploaded_images/'
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Required to use Flask sessions and debug toolbar:
 app.secret_key = "SECRET"
@@ -45,11 +47,15 @@ def upload_image():
 @app.route('/process-image', methods=["POST"])
 def process_image():
     """Convert and analyze image, add to DB"""
-    img_url = request.form.get("pic")
-    convert_resize_image(img_url)
-    img = Image.query.filter(Image.img_url == img_url).first()
-    pillow_analyze_image(img)
+    img = request.files['pic']
+    img.save(os.path.join(app.config['UPLOAD_FOLDER'], img.filename))
+    img_path = app.config['UPLOAD_FOLDER'] + img.filename
 
+    convert_resize_image(img_path)
+    img = Image.query.filter(Image.img_url == img_path).first()
+    img_url = img.img_url
+    pillow_analyze_image(img_url)
+    return redirect("/")
 
 @app.route('/register', methods=["GET"])
 def register_form():
@@ -108,9 +114,6 @@ def process_login():
 @app.route("/logout", methods=["POST"])
 def logout():
     """User account logout."""
-    # session.pop removes user_id key/value from session, does not set value to none
-    # session.pop('user_id', None)
-    # print session['user_id']
 
     #delete user_id from session
     del session['user_id']
@@ -141,20 +144,24 @@ def get_freqs():
 def convert_resize_image(img_url):
     """Convert image to greyscale and resize before adding to db"""
     baseheight = 720
-    img = PIL.Image.open(img_url).convert('L')
+    img = PILimage.open(img_url).convert('L')
     height_percent = (baseheight / float(img.size[1]))
     width_size = int((float(img.size[0]) * float(height_percent)))
-    img = img.resize((width_size, baseheight), PIL.Image.ANTIALIAS)
+    img = img.resize((width_size, baseheight), PILimage.ANTIALIAS)
     img.save(img_url)
+
+    #still need to set whether image is private or public
 
     if 'user_id' in session:
         user_id = session['user_id']
     else:
         user_id = None
+    # import pdb; pdb.set_trace()
 
     new_img = Image(img_url=img_url,
-                    user_id=user_id,
-                    private=private)
+                    user_id=user_id)
+                    # private=private)
+
  
     db.session.add(new_img)
     db.session.commit()
@@ -162,8 +169,8 @@ def convert_resize_image(img_url):
 
 def pillow_analyze_image(img_url):
     """Analyze each pixel with Pillow and add data to image_columns"""
-    img = PIL.Image.open(img_url)
-    i = Image.query.filter(images.img_url == img_url).all()
+    img = PILimage.open(img_url)
+    i = Image.query.filter(Image.img_url == img_url).first()
     img_id = i.img_id
 
     col_num = 0
@@ -179,7 +186,7 @@ def pillow_analyze_image(img_url):
                                 pixel_array=pixel_array
                                 )
 
-        db.session.add(pixel_array)
+        db.session.add(new_array)
     db.session.commit()
 
 

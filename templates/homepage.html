@@ -18,7 +18,7 @@ $('#myButton').on('click', function () {
 </script>
 <br>
 <br>
-<form action="/upload-image">
+<form action="/process-image" enctype="multipart/form-data" method="POST">
     <input type="file" name ="pic" accept="image/*">
     <br>
     <input type="submit">
