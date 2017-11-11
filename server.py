@@ -23,17 +23,19 @@ app.jinja_env.undefined = StrictUndefined
 #*****************************************************#
 # Routes
 """TO DO:
+- Images on homepage route to play synths (get json pixel data, pass to AJAX)
 - Image library
 - User page / Image Library
 - Select Image and display
-- Play Image
 
 """
 
 @app.route('/')
 def index():
     """Homepage."""
-    return render_template("homepage.html")
+    imgs = Image.query.filter(Image.img_id <= 3).all()
+    
+    return render_template("homepage.html", imgs=imgs)
 
 
 @app.route('/frequencies.json')
@@ -42,16 +44,19 @@ def jsonify_freqs():
     frequencies = get_freqs()
     return jsonify(frequencies)
 
+# NOT GETTING IMAGE ID FROM FORM???
 @app.route('/pixel_data.json')
 def jsonify_pixel_data():
-    #img_id = form.request.get("whatever name")
-    # pixel_data = get_pixel_data(img_id)
+    img_id = request.args.get("img_id")
+    pixel_data = get_pixel_data(img_id)
     return jsonify(pixel_data)
+
 
 @app.route('/upload-image', methods=["GET"])
 def upload_image():
     """Upload image via form"""
     return render_template("homepage.html")
+
 
 @app.route('/process-image', methods=["POST"])
 def process_image():
@@ -65,6 +70,7 @@ def process_image():
     img_url = img.img_url
     pillow_analyze_image(img_url)
     return redirect("/")
+
 
 @app.route('/register', methods=["GET"])
 def register_form():
@@ -192,16 +198,12 @@ def pillow_analyze_image(img_url):
     i = Image.query.filter(Image.img_url == img_url).first()
     img_id = i.img_id
 
-    col_num = 0
-
     for x in range(img.width):
         pixel_array = []
         for y in range(img.height):
             pixel = img.getpixel((x, y))
             pixel_array.append(pixel)
-            col_num += 1
         new_array = ImageColumn(img_id=img_id,
-                                col_num=col_num,
                                 pixel_array=pixel_array
                                 )
 

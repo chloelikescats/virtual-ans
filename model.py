@@ -51,7 +51,7 @@ class ImageColumn(db.Model):
 
     img_col_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     img_id = db.Column(db.Integer, db.ForeignKey('images.img_id'), nullable=False)
-    col_num = db.Column(db.Integer, nullable=False)
+    # col_num = db.Column(db.Integer, nullable=False)
     pixel_array = db.Column(db.ARRAY(db.Integer), nullable=False)
 
 
@@ -63,9 +63,8 @@ class ImageColumn(db.Model):
 
     def __repr__(self):
         """Provide helpful object representation when printed."""
-        return "<Image Data img_col_id=%s, img_id=%s, col_num=%s>" % (self.img_col_id,
-                                                                 self.img_id,
-                                                                 self.col_num)
+        return "<Image Data img_col_id=%s, img_id=%s>" % (self.img_col_id,
+                                                                 self.img_id)
 
 
 class Heart(db.Model):
