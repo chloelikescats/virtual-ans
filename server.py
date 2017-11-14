@@ -149,7 +149,8 @@ def get_freqs():
         new_freq = freq.freq_hz
         freq_list.append(new_freq)
 
-    frequencies['frequency'] = freq_list[100:220]
+    # frequencies['frequency'] = freq_list[100:220]
+    frequencies['frequency'] = freq_list
     return frequencies
 
 

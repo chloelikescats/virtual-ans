@@ -72,7 +72,7 @@ function playSynths(result) {
             clearInterval(interval);
 
             //stop environment eventually, for now just set all mul to 0
-            for (let i=0; i < 15; i++) {
+            for (let i=0; i < 120; i++) {
                 console.log(sinOscs[i]);
                 sinOscs[i].options.synthDef.add = -1.0;
             }
@@ -85,20 +85,20 @@ function playPixelColumn(pixelColumn) {
 
     // debugger;
     let i = 1;
-    for (let j=100; j<220; j++) {
+    for (let j=0; j<120; j++) {
         let synth_id = "sin" + i;
         let pixel = pixelColumn[j];
         let newMul;
 
-        if (pixel > 50) {
-            // newMul = pixel / 2500; /* pixel val: 0-255, mul range: 0.00-0.05 */
-            newMul = 1.0;
+        if (pixel > 100) {
+            newMul = pixel / 2500; /* pixel val: 0-255, mul range: 0.00-0.05 */
+            // newMul = 1.0;
 
         } else {
             newMul = 0.0;
         }
         // debugger;
-        sinOscs[j-100].set(synth_id+".mul", newMul);
+        sinOscs[j].set(synth_id+".mul", newMul);
         // sinOscs[j-100].options.synthDef.add = newAdd;
         i+=1;
     }

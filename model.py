@@ -126,31 +126,31 @@ def connect_to_db(app, db_uri="postgresql:///ans"):
 def calculate_semitones():
     """Calculate frequencies for each octave and add to table."""
     base = [20.31,
-            20.91, 21.52,
-            22.15, 22.80, 
-            23.47, 24.16, 
-            24.86, 25.59, 
-            26.34, 27.11, 
-            27.91, 28.73, 
-            29.57, 30.43, 
-            31.33, 32.24]
+            20.91,
+            22.15,
+            23.47,
+            24.86, 
+            26.34,
+            27.91, 
+            29.57, 
+            31.33]
 
     for freq in base:
         db.session.add(Frequency(freq_hz=freq))
     db.session.commit()
 
-    current_octave = [32.70, 33.68,
-                      34.65, 35.68, 
-                      36.71, 37.80,
-                      38.89, 40.05,
-                      41.20, 42.43,
-                      43.65, 44.95,
-                      46.25, 47.62,
-                      49.00, 50.46,
-                      51.91, 53.46,
-                      55.00, 56.64,
-                      58.27, 60.00,
-                      61.74, 63.57]
+    current_octave = [32.70,
+                      34.65,
+                      36.71,
+                      38.89,
+                      41.20,
+                      43.65,
+                      46.25,
+                      49.00,
+                      51.91,
+                      55.00,
+                      58.27,
+                      61.74]
 
     for octave_num in range(9):
         for freq in current_octave:
@@ -158,9 +158,9 @@ def calculate_semitones():
         db.session.commit()
         current_octave = [freq * 2 for freq in current_octave]
 
-    over = [16742.40, 17244.16,
-            17740.80, 18268.16,
-            18795.52, 19353.60,
+    over = [16742.40,
+            17740.80,
+            18795.52,
             19911.68]
 
     for freq in over:
