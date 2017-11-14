@@ -23,7 +23,6 @@ app.jinja_env.undefined = StrictUndefined
 #*****************************************************#
 # Routes
 """TO DO:
-- Images on homepage route to play synths (get json pixel data, pass to AJAX)
 - Image library
 - User page / Image Library
 - Select Image and display
@@ -33,7 +32,7 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """Homepage."""
-    imgs = Image.query.filter(Image.img_id <= 3).all()
+    imgs = Image.query.filter(Image.img_id <= 8).all()
     
     return render_template("homepage.html", imgs=imgs)
 
@@ -150,7 +149,7 @@ def get_freqs():
         new_freq = freq.freq_hz
         freq_list.append(new_freq)
 
-    frequencies['frequency'] = freq_list
+    frequencies['frequency'] = freq_list[100:220]
     return frequencies
 
 
@@ -159,7 +158,7 @@ def get_pixel_data(img_id):
     image_columns = ImageColumn.query.filter(ImageColumn.img_id == img_id).all()
     columns = {}
     column_list = []
-
+    # LIST SLICING GO!
     for column in image_columns:
         new_column = column.pixel_array
         column_list.append(new_column)
@@ -199,10 +198,19 @@ def pillow_analyze_image(img_url):
     img_id = i.img_id
 
     for x in range(img.width):
-        pixel_array = []
+        undiv_pixel_array = []
         for y in range(img.height):
             pixel = img.getpixel((x, y))
-            pixel_array.append(pixel)
+            undiv_pixel_array.append(pixel)
+
+        pixel_array = []
+        morsel_size = 3
+        for i in xrange(0, len(undiv_pixel_array), morsel_size):
+            morsel = undiv_pixel_array[i:i + morsel_size]
+            morsel_sum = morsel[0] + morsel[1] + morsel[2]
+            average = morsel_sum / 3
+            pixel_array.append(average)
+
         new_array = ImageColumn(img_id=img_id,
                                 pixel_array=pixel_array
                                 )

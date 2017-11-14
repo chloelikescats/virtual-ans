@@ -30,11 +30,11 @@ function generateSynths(result) {
                     ugen: "flock.ugen.sinOsc",
                     id: synth_id,
                     freq: frequencyArray[freq_hz],
-                    mul: 0.05
+                    mul: 0.0
                 }
         };
         sinOscs.push(flock.synth(sinOsc));
-        count += 1 
+        count += 1
     }
     console.log("done loading freqs!");
 }
@@ -42,14 +42,6 @@ function generateSynths(result) {
 
 //250 at a time seems to be the functional limit of the environment
 // I will want to divide by octave and have seperate play functions with bp filters?
-
-    virtual_ans.play = function () {  
-        let i = 0;
-        for (let sinOsc of sinOscs) {
-            let synthName = sinOsc;
-            i += 1;
-        }
-    };
 
 
 $("#play").on("submit", getJSON);
@@ -65,7 +57,7 @@ function getJSON(evt) {
 // Function that unpacks a column data every second
 function playSynths(result) {
     environment.start();
-    virtual_ans.play();
+    // virtual_ans.play();
 
     let columnArray = result['column'];
     // I want to get next pixelColumn and set muls once every second (for now)
@@ -80,9 +72,9 @@ function playSynths(result) {
             clearInterval(interval);
 
             //stop environment eventually, for now just set all mul to 0
-            for (let i=0; i < 240; i++) {
+            for (let i=0; i < 15; i++) {
                 console.log(sinOscs[i]);
-                sinOscs[i].options.synthDef.mul = 0;
+                sinOscs[i].options.synthDef.add = -1.0;
             }
         }
     }, 1000)
@@ -91,18 +83,23 @@ function playSynths(result) {
 
 function playPixelColumn(pixelColumn) {
 
-    // let i = 0;
-    // for (let pixel of pixelColumn) {
-    for (let j=0; j<240; j++) {
+    // debugger;
+    let i = 1;
+    for (let j=100; j<220; j++) {
+        let synth_id = "sin" + i;
         let pixel = pixelColumn[j];
-        let newMul = pixel / 5000; /* pixel val: 0-255, mul range: 0.00-0.05 */
+        let newMul;
 
-        let osc = sinOscs[j];
-        // debugger;
-        if (osc === undefined) {
-            console.log(j);
+        if (pixel > 50) {
+            // newMul = pixel / 2500; /* pixel val: 0-255, mul range: 0.00-0.05 */
+            newMul = 1.0;
+
+        } else {
+            newMul = 0.0;
         }
-        sinOscs[j].options.synthDef.mul = newMul;
-        // i += 1;
+        // debugger;
+        sinOscs[j-100].set(synth_id+".mul", newMul);
+        // sinOscs[j-100].options.synthDef.add = newAdd;
+        i+=1;
     }
 }
