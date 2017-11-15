@@ -25,15 +25,14 @@ app.jinja_env.undefined = StrictUndefined
 """TO DO:
 - Image library
 - User page / Image Library
-- Select Image and display
-
+- Private images versus Public images
+- Drawing Canvas and Save images from canvas
 """
 
 @app.route('/')
 def index():
     """Homepage."""
-    imgs = Image.query.filter(Image.img_id <= 8).all()
-    
+    imgs = Image.query.filter(Image.img_id <= 5).all()
     return render_template("homepage.html", imgs=imgs)
 
 
@@ -43,7 +42,7 @@ def jsonify_freqs():
     frequencies = get_freqs()
     return jsonify(frequencies)
 
-# NOT GETTING IMAGE ID FROM FORM???
+
 @app.route('/pixel_data.json')
 def jsonify_pixel_data():
     img_id = request.args.get("img_id")
@@ -60,11 +59,12 @@ def upload_image():
 @app.route('/process-image', methods=["POST"])
 def process_image():
     """Convert and analyze image, add to DB"""
+    privacy = request.form.get("privacy")
     img = request.files['pic']
     img.save(os.path.join(app.config['UPLOAD_FOLDER'], img.filename))
     img_path = app.config['UPLOAD_FOLDER'] + img.filename
 
-    convert_resize_image(img_path)
+    convert_resize_image(img_path, privacy)
     img = Image.query.filter(Image.img_url == img_path).first()
     img_url = img.img_url
     pillow_analyze_image(img_url)
@@ -92,7 +92,7 @@ def process_registration():
     db.session.add(new_user)
     db.session.commit()
 
-    #automatically login user by adding user_id to session:
+    # automatically login user by adding user_id to session:
     session['user_id'] = new_user.user_id
     flash('Successfully registered.')
     return redirect("/")
@@ -129,11 +129,18 @@ def process_login():
 def logout():
     """User account logout."""
 
-    #delete user_id from session
+    # delete user_id from session
     del session['user_id']
     flash('You have successfully logged out.')
 
     return redirect("/")
+
+@app.route("/user-page/<user_id>")
+def user_page(user_id):
+    """Show user details"""
+    user = User.query.filter(User.user_id == user_id).first()
+    return render_template("user-page.html",
+                            user_id=user_id)
 
 
 #*****************************************************#
@@ -149,7 +156,6 @@ def get_freqs():
         new_freq = freq.freq_hz
         freq_list.append(new_freq)
 
-    # frequencies['frequency'] = freq_list[100:220]
     frequencies['frequency'] = freq_list
     return frequencies
 
@@ -159,7 +165,7 @@ def get_pixel_data(img_id):
     image_columns = ImageColumn.query.filter(ImageColumn.img_id == img_id).all()
     columns = {}
     column_list = []
-    # LIST SLICING GO!
+
     for column in image_columns:
         new_column = column.pixel_array
         column_list.append(new_column)
@@ -169,7 +175,7 @@ def get_pixel_data(img_id):
 
 #Not sure whether or not I want to constrain the width to specified width
 #right now I am scaling width based on set height
-def convert_resize_image(img_url):
+def convert_resize_image(img_url, privacy):
     """Convert image to greyscale and resize before adding to db"""
     baseheight = 720
     img = PILimage.open(img_url).convert('L')
@@ -179,6 +185,11 @@ def convert_resize_image(img_url):
     img.save(img_url)
 
     #still need to set whether image is private or public
+    if 'privacy' == 'private':
+        private = True
+    else:
+        private = False
+
 
     if 'user_id' in session:
         user_id = session['user_id']
@@ -186,8 +197,8 @@ def convert_resize_image(img_url):
         user_id = None
 
     new_img = Image(img_url=img_url,
-                    user_id=user_id)
-                    # private=private)
+                    user_id=user_id,
+                    private=private)
     db.session.add(new_img)
     db.session.commit()
 

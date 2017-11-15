@@ -160,8 +160,7 @@ def calculate_semitones():
 
     over = [16742.40,
             17740.80,
-            18795.52,
-            19911.68]
+            18795.52]
 
     for freq in over:
         db.session.add(Frequency(freq_hz=freq))

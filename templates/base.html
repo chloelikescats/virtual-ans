@@ -12,6 +12,8 @@
     <form action="/logout" method="POST">
       <input type="submit" id="logout" value="Log Out">
     </form>
+
+    <a href="/user-page/{{ session['user_id'] }}">Profile</a>
   {% else %}
     <a href="/login">Log In</a>
     <br>
