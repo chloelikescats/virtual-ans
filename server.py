@@ -24,7 +24,6 @@ app.jinja_env.undefined = StrictUndefined
 """TO DO:
 - Image library (public)
 - User images (private and public)
-- Save images from canvas
 - About Page
 """
 
@@ -72,18 +71,24 @@ def process_canvas():
     """Convert and Analyze image from Canvas, add to DB"""
     img = request.files['myFileName']
     privacy = False
+
+    if 'user_id' in session:
+        user_id = session['user_id']
+    else:
+        user_id = None
+
     # Add DB record with dummy URL
-    new_img_record = Image(user_id=session["user_id"],
+    new_img_record = Image(user_id=user_id,
                            img_url="")
     db.session.add(new_img_record)
     db.session.commit()
     # Set the filename
     new_img_id = new_img_record.img_id
     filename = "image_" + str(new_img_id) + '.jpg'
-    # Save img to folder
-    img.save(os.path.join(UPLOAD_FOLDER, filename))
-    # Update DB with real URL
     img_path = UPLOAD_FOLDER + filename
+    # Save img to folder
+    img.save(img_path)
+    # Update DB with real URL
     new_img_record.img_url = img_path
     db.session.commit()
     # Convert and Resize Image and Analyze Pixels

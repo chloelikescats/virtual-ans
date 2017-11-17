@@ -74,12 +74,7 @@ function playSynths(result) {
 
         if (columnNum >= columnArray.length) {
             clearInterval(interval);
-
-            //stop environment eventually, for now just set all mul to 0
-            for (let i=0; i < 120; i++) {
-                console.log(sinOscs[i]);
-                sinOscs[i].options.synthDef.mul = 0.0;
-            }
+            environment.stop();
         }
     }, 250)
 }
