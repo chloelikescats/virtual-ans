@@ -4,25 +4,9 @@
 
 {% block content %}
 
-<h2>What is the ANS?</h2>
-<p>The ANS synthesizer is a photoelectronic musical instrument created by Russian engineer Evgeny Murzin between 1937 and 1958. The ANS is named in honor of the composer Alexander Nikolayevich Scriabin. The technological basis of the ANS utilizes the method of graphical sound recording used in cinematography (developed concurrently in Russia and USA), making it possible to obtain a visible image of a sound wave and to synthesize sound from an artificially drawn sound spectrogram. 
-<br>
-<br>
-The ANS utilizes sine waves printed on five glass discs, each roughly the same size as a CDR. Each disc has 144 individual waveforms printed onto it, for a total of 720 microtones spanning 10 octaves (yielding a resolution of 1/72 octave, or 16.17 cents). The modulated light from these discs is then projected onto the back of the synthesizer's interface. These are arranged vertically, with low frequencies at the bottom and high frequencies at the top.
-<br>
-<br>
-The user interface consists of a glass plate covered in non-drying opaque black mastic which is scratched away, thus allowing light to pass through at that point. In front of the glass plate sits a vertical bank of twenty photocells that send signals to twenty amplifiers and bandpass filters, each with its own gain adjust control. It is akin to a ten-octave equalizer with two knobs per octave. The ANS is fully polyphonic and will generate all 720 pitches simultaneously (a vertical scratch would accomplish this).
-<br>
-<br>
-After several years at the Theremin Center, the ANS is now located in the Glinka State Central Museum of Musical Culture in Moscow. There is only one ANS in existence-- the original was destroyed. 
-<br>
-<br>
-You can hear the sounds of the ANS in Andrei Tarkovsky's movies Solaris, The Mirror and Stalker. In 2004, British experimental group Coil released a boxed set of drone music performed on the ANS entitled CoilANS.
-</p>
-
 <!-- Play button in ANS interface sends img_id to route that gets pixel data and passes to JavaScript -->
 <div>
-    <img src="" id="queue" height="300px">
+    <img src="/static/images/black.png" id="queue" height="360px">
 <form id="play">
     <input type="hidden" id="img_id_in" name="img_id">
     <input type="submit" value="Play">
@@ -42,7 +26,7 @@ You can hear the sounds of the ANS in Andrei Tarkovsky's movies Solaris, The Mir
 <br>
 
 
-
+<!-- Playable images (pre-analyzed) -->
 <div id="images">
     {% for img in imgs %}
     <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
@@ -61,34 +45,37 @@ You can hear the sounds of the ANS in Andrei Tarkovsky's movies Solaris, The Mir
 </script>
 
 <!-- *********************************************************************** -->
-<br>
+<!-- Canvas -->
 <br>
 <div>
-    <canvas id="canvas" width="450" height="720" style="border:1px solid #000000; background-color: black;"></canvas>
+    <canvas id="canvas" width="240" height="360" style="border:1px solid #000000; background-color: black;"></canvas>
 
     <p class="toolList">
         <button id="clearCanvas" type="button">Clear</button>
         <button id="pen" type="button">Pen</button>
         <button id="eraser" type="button">Eraser</button>
+        <button id="saveCanvas" type="button">Save/Play</button>
     </p>
-
 </div>
 
 <script>
-// save canvas image as data url (png)
-let dataURL = canvas.toDataURL();
 context = document.getElementById('canvas').getContext("2d");
-
+context.fillStyle="black";
 let colorBlack = "black";
 let colorWhite = "white";
-
 let curColor = colorWhite;
+let clickX = new Array();
+let clickY = new Array();
+let clickDrag = new Array();
+let clickColor = new Array;
+let paint;
 
 $('#canvas').mousedown(function(e){
   let mouseX = e.pageX - this.offsetLeft;
   let mouseY = e.pageY - this.offsetTop;
         
   paint = true;
+
   addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, false, curColor);
   redraw();
 });
@@ -96,6 +83,7 @@ $('#canvas').mousedown(function(e){
 $('#canvas').mousemove(function(e){
   if(paint){
     addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true, curColor);
+
     redraw();
   }
 });
@@ -108,14 +96,7 @@ $('#canvas').mouseleave(function(e){
   paint = false;
 });
 
-let clickX = new Array();
-let clickY = new Array();
-let clickDrag = new Array();
-let clickColor = new Array;
-let paint;
-
-function addClick(x, y, dragging, color)
-{
+function addClick(x, y, dragging, color){
   clickX.push(x);
   clickY.push(y);
   clickDrag.push(dragging);
@@ -123,11 +104,8 @@ function addClick(x, y, dragging, color)
 }
 
 function redraw(){
-  // context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
-  
-  // context.strokeStyle = "white";
   context.lineJoin = "square";
-  context.lineWidth = 3;
+  context.lineWidth = 5;
             
   for(let i=0; i < clickX.length; i++) {        
     context.beginPath();
@@ -143,27 +121,55 @@ function redraw(){
   }
 }
 
+// ***************************************************************** 
+// Event Listeners:
+
+// Clear Canvas:
 document.getElementById('clearCanvas').addEventListener('click', function(){
     context.clearRect(0, 0, context.canvas.width, context.canvas.height); 
     clickX = new Array();
     clickY = new Array();
     clickDrag = new Array();
-    let clickColor = new Array;
-    let clickTool = new Array();
     context.beginPath();
 });
 
+// Select Eraser Tool:
 document.getElementById('eraser').addEventListener('click', function() {
     curColor = colorBlack;
 });
 
+// Select Pen Tool:
 document.getElementById('pen').addEventListener('click', function() {
     curColor = colorWhite;
 });
 
 
-</script>
+// Save Canvas (get URL to pass to app route):
+document.getElementById('saveCanvas').addEventListener('click', function(){
+    let canvas = document.getElementById('canvas');
+        let dataUrl = canvas.toDataURL('image/jpeg');
+        let blobBin = atob(dataUrl.split(',')[1]);
+        let array = [];
+        for (let i = 0; i <blobBin.length; i++) {
+            array.push(blobBin.charCodeAt(i));
+        }
 
+        let file = new Blob([new Uint8Array(array)], {type: 'image/jpg'});
+
+        let formData = new FormData();
+        formData.append("myFileName", file);
+
+
+        $.ajax({
+            type: 'POST',
+            url: '/process-canvas',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: playSynths
+        });
+});
+</script>
 
 
 <script src="/static/js/flocking/flocking-all.js"></script>

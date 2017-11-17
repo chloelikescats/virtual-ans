@@ -15,6 +15,7 @@
 
     <a href="/user-page/{{ session['user_id'] }}">Profile</a>
   {% else %}
+
     <a href="/login">Log In</a>
     <br>
     <a href="/register">Register</a>
@@ -22,7 +23,7 @@
 
     {% with messages = get_flashed_messages() %}
          {% if messages %}
-            <ul style="list-style-type: none; color: red;">
+            <ul style="list-style-type: none; color: magenta;">
                {% for message in messages %}
                <li>{{ message }}</li>
                {% endfor %}

@@ -12,7 +12,6 @@ import os
 UPLOAD_FOLDER = 'static/uploaded_images/'
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Required to use Flask sessions and debug toolbar:
 app.secret_key = "SECRET"
@@ -23,10 +22,10 @@ app.jinja_env.undefined = StrictUndefined
 #*****************************************************#
 # Routes
 """TO DO:
-- Image library
-- User page / Image Library
-- Private images versus Public images
-- Drawing Canvas and Save images from canvas
+- Image library (public)
+- User images (private and public)
+- Save images from canvas
+- About Page
 """
 
 @app.route('/')
@@ -61,18 +60,42 @@ def process_image():
     """Convert and analyze image, add to DB"""
     privacy = request.form.get("privacy")
     img = request.files['pic']
-    img.save(os.path.join(app.config['UPLOAD_FOLDER'], img.filename))
-    img_path = app.config['UPLOAD_FOLDER'] + img.filename
-
+    img_path = UPLOAD_FOLDER + img.filename
+    img.save(img_path)
     convert_resize_image(img_path, privacy)
-    img = Image.query.filter(Image.img_url == img_path).first()
-    img_url = img.img_url
-    pillow_analyze_image(img_url)
+    pillow_analyze_image(img_path)
     return redirect("/")
 
 
+@app.route('/process-canvas', methods=["POST"])
+def process_canvas():
+    """Convert and Analyze image from Canvas, add to DB"""
+    img = request.files['myFileName']
+    privacy = False
+    # Add DB record with dummy URL
+    new_img_record = Image(user_id=session["user_id"],
+                           img_url="")
+    db.session.add(new_img_record)
+    db.session.commit()
+    # Set the filename
+    new_img_id = new_img_record.img_id
+    filename = "image_" + str(new_img_id) + '.jpg'
+    # Save img to folder
+    img.save(os.path.join(UPLOAD_FOLDER, filename))
+    # Update DB with real URL
+    img_path = UPLOAD_FOLDER + filename
+    new_img_record.img_url = img_path
+    db.session.commit()
+    # Convert and Resize Image and Analyze Pixels
+    convert_resize_image(img_path, privacy)
+    pillow_analyze_image(img_path)
+    # Get Pixel Data Corresponding to img_id and Jsonify
+    pixel_data = get_pixel_data(new_img_id)
+    return jsonify(pixel_data)
+
+
 @app.route('/register', methods=["GET"])
-def register_form():
+def register_form(): 
     """Shows user registration form"""
     return render_template("registration.html")
 
@@ -185,11 +208,10 @@ def convert_resize_image(img_url, privacy):
     img.save(img_url)
 
     #still need to set whether image is private or public
-    if 'privacy' == 'private':
+    if privacy == 'private':
         private = True
     else:
         private = False
-
 
     if 'user_id' in session:
         user_id = session['user_id']
@@ -216,11 +238,11 @@ def pillow_analyze_image(img_url):
             undiv_pixel_array.append(pixel)
 
         pixel_array = []
-        morsel_size = 3
+        morsel_size = 6
         for i in xrange(0, len(undiv_pixel_array), morsel_size):
             morsel = undiv_pixel_array[i:i + morsel_size]
-            morsel_sum = morsel[0] + morsel[1] + morsel[2]
-            average = morsel_sum / 3
+            morsel_sum = morsel[0] + morsel[1] + morsel[2] + morsel[3] + morsel[4] + morsel[5]
+            average = morsel_sum / 6
             pixel_array.append(average)
 
         new_array = ImageColumn(img_id=img_id,
@@ -241,6 +263,6 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run(port=5000, host='0.0.0.0')

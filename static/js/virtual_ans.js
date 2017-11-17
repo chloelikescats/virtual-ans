@@ -20,6 +20,7 @@ let environment = flock.init();
 let sinOscs = [];
 function generateSynths(result) {
     let frequencyArray = result['frequency']
+    frequencyArray = frequencyArray.reverse();
 
     let count = 0;
     for (let freq_hz in frequencyArray) {
@@ -36,7 +37,6 @@ function generateSynths(result) {
         sinOscs.push(flock.synth(sinOsc));
         count += 1
     }
-    console.log("done loading freqs!");
 }
 
 
@@ -54,6 +54,7 @@ function getJSON(evt) {
 }
 
 
+
 // Function that unpacks a column data every second
 function playSynths(result) {
     environment.start();
@@ -67,39 +68,37 @@ function playSynths(result) {
         let pixelColumn = columnArray[columnNum];
         playPixelColumn(pixelColumn);
 
+
         columnNum += 1;
-        if (columnNum > columnArray.length) {
+        console.log(columnArray.length);
+
+        if (columnNum >= columnArray.length) {
             clearInterval(interval);
 
             //stop environment eventually, for now just set all mul to 0
             for (let i=0; i < 120; i++) {
                 console.log(sinOscs[i]);
-                sinOscs[i].options.synthDef.add = -1.0;
+                sinOscs[i].options.synthDef.mul = 0.0;
             }
         }
-    }, 1000)
+    }, 250)
 }
 
 
 function playPixelColumn(pixelColumn) {
-
-    // debugger;
     let i = 1;
     for (let j=0; j<120; j++) {
         let synth_id = "sin" + i;
         let pixel = pixelColumn[j];
         let newMul;
 
-        if (pixel > 100) {
+        if (pixel > 50) {
             newMul = pixel / 2500; /* pixel val: 0-255, mul range: 0.00-0.05 */
-            // newMul = 1.0;
-
         } else {
             newMul = 0.0;
         }
-        // debugger;
+
         sinOscs[j].set(synth_id+".mul", newMul);
-        // sinOscs[j-100].options.synthDef.add = newAdd;
         i+=1;
     }
 }
