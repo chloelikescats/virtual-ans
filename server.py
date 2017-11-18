@@ -33,6 +33,20 @@ def index():
     imgs = Image.query.filter(Image.img_id <= 5).all()
     return render_template("homepage.html", imgs=imgs)
 
+@app.route('/about')
+def about_page():
+    """About page"""
+    # Add link on base
+    return render_template("about.html")
+
+
+@app.route('/image-library')
+def image_library():
+    """Public image library"""
+    # Add link on base
+    # Redirect to homepage when image is selected.
+    return render_template("image-library.html")
+
 
 @app.route('/frequencies.json')
 def jsonify_freqs():
@@ -43,6 +57,7 @@ def jsonify_freqs():
 
 @app.route('/pixel_data.json')
 def jsonify_pixel_data():
+    """Get pixel data and jsonify"""
     img_id = request.args.get("img_id")
     pixel_data = get_pixel_data(img_id)
     return jsonify(pixel_data)
@@ -76,7 +91,6 @@ def process_canvas():
         user_id = session['user_id']
     else:
         user_id = None
-
     # Add DB record with dummy URL
     new_img_record = Image(user_id=user_id,
                            img_url="")
@@ -246,7 +260,11 @@ def pillow_analyze_image(img_url):
         morsel_size = 6
         for i in xrange(0, len(undiv_pixel_array), morsel_size):
             morsel = undiv_pixel_array[i:i + morsel_size]
-            morsel_sum = morsel[0] + morsel[1] + morsel[2] + morsel[3] + morsel[4] + morsel[5]
+
+            morsel_sum = 0
+            for i in morsel:
+                morsel_sum = morsel_sum + i
+                i += 1
             average = morsel_sum / 6
             pixel_array.append(average)
 
