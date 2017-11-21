@@ -1,0 +1,59 @@
+.parent {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin: auto;
+    width: 50%;
+}
+
+#base {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#mid {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#queue {
+    position: absolute;
+    top: 121px;
+    left: 305px;
+}
+
+#top {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#playButton {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#images {
+    position: relative;
+    top: 700px;
+    left: 35px;
+    margin: auto;
+    width: 50%;
+}
+
+#images #play {
+    position: relative;
+    top: -22px;
+    left: 267px;
+}
+
+#uploadForm {
+    position: relative;
+    top: 750px;
+    left: 250px;
+    margin: auto;
+    width: 50%;
+}

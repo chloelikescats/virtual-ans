@@ -4,35 +4,59 @@
 
 {% block content %}
 
-<!-- Play button in ANS interface sends img_id to route that gets pixel data and passes to JavaScript -->
-<div>
-    <img src="/static/images/black.png" id="queue" height="360px">
-<form id="play">
-    <input type="hidden" id="img_id_in" name="img_id">
-    <input type="submit" value="Play">
-</form>
+<div id="selection">
+  <br>
+  <form>
+    <input type="button" name="selectImg" value="Select Image" onclick="showImages()"></input>
+    <br>
+    <input type="button" name="uploadImg" value="Upload Image" onclick="showUploadForm()"></input>
+    <br>
+    <input type="button" name="drawImg" value="Draw Image" onclick="showCanvas()"></input>
+  </form>
 </div>
 
-<br>
-<br>
-<form action="/process-image" enctype="multipart/form-data" method="POST">
-    <input type="file" name ="pic" accept="image/*"/>
-    <br>
-    <input type="radio" name="privacy" value="private">Private
-    <input type="radio" name="privacy" value="public">Public
-    <br>
-    <input type="submit"/>
-</form>
-<br>
+<script>
+
+function showImages() {
+  document.getElementById('images').style.display = "block";
+  document.getElementById('uploadForm').style.display = "none";
+  document.getElementById('myCanvas').style.display = "none";
+}
+
+function showUploadForm() {
+  document.getElementById('uploadForm').style.display = "block";
+  document.getElementById('images').style.display = "none";
+  document.getElementById('myCanvas').style.display = "none";
+}
+
+function showCanvas() {
+  document.getElementById('myCanvas').style.display = "block";
+  document.getElementById('images').style.display = "none";
+  document.getElementById('uploadForm').style.display = "none";
+}
+
+</script>
+
+<div class="parent">
+  <img id="base" src="/static/images/base.png" height="750">
+  <img id="mid" src="/static/images/mid.png" height="750">
+  <img id="queue"src="/static/images/black.png"  height="250px">
+  <img id="top" src="/static/images/top.png" height="750">
+  <img id="playButton" src="/static/images/playbutton.png" height="750">
+</div>
 
 
-<!-- Playable images (pre-analyzed) -->
-<div id="images">
+<!-- *********************************************************************** -->
+<!-- Play button in ANS interface sends img_id to route that gets pixel data and passes to JavaScript -->
+<div id="images" style="display:none">
+  <form id="play">
+    <input type="hidden" id="img_id_in" name="img_id">
+    <input type="submit" value="Play">
+  </form>
+  <!-- Playable images (pre-analyzed) -->
     {% for img in imgs %}
     <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
     {% endfor %}
-</div>
-
 <script>
     $('.playables').on('click', function() {
         //get image id, load image in interface, pass image id to hidden input
@@ -43,11 +67,24 @@
         $("#img_id_in").val(imgId);
     });
 </script>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- Upload image form -->
+<div id="uploadForm" style="display:none">
+<form action="/process-image" enctype="multipart/form-data" method="POST">
+    <input type="file" name ="pic" accept="image/*"/>
+    <br>
+    <input type="radio" name="privacy" value="private">Private
+    <input type="radio" name="privacy" value="public">Public
+    <br>
+    <input type="submit"/>
+</form>
+</div>
 
 <!-- *********************************************************************** -->
 <!-- Canvas -->
-<br>
-<div>
+<div id="myCanvas" style="display:none">
     <canvas id="canvas" width="240" height="360" style="border:1px solid #000000; background-color: black;"></canvas>
 
     <p class="toolList">

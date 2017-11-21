@@ -4,15 +4,18 @@
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <title>Virtual ANS</title>
   {% block head %} put things needed in head here {% endblock %}
+ <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
 </head>
 
 <body>
   <h1>Virtual ANS</h1>
+  <a href="/">Home</a>
+  <a href="/about">About</a>
+  <a href="/image-library">Library</a>
   {% if 'user_id' in session %}
     <form action="/logout" method="POST">
       <input type="submit" id="logout" value="Log Out">
     </form>
-
     <a href="/user-page/{{ session['user_id'] }}">Profile</a>
   {% else %}
 

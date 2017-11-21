@@ -36,14 +36,12 @@ def index():
 @app.route('/about')
 def about_page():
     """About page"""
-    # Add link on base
     return render_template("about.html")
 
 
 @app.route('/image-library')
 def image_library():
     """Public image library"""
-    # Add link on base
     # Redirect to homepage when image is selected.
     return render_template("image-library.html")
 
