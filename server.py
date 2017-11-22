@@ -30,7 +30,7 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """Homepage."""
-    imgs = Image.query.filter(Image.img_id <= 5).all()
+    imgs = Image.query.filter(Image.private == False).all()
     return render_template("homepage.html", imgs=imgs)
 
 @app.route('/about')
@@ -39,11 +39,11 @@ def about_page():
     return render_template("about.html")
 
 
-@app.route('/image-library')
-def image_library():
-    """Public image library"""
-    # Redirect to homepage when image is selected.
-    return render_template("image-library.html")
+# @app.route('/image-library')
+# def image_library():
+#     """Public image library"""
+#     # Redirect to homepage when image is selected.
+#     return render_template("image-library.html")
 
 
 @app.route('/frequencies.json')
@@ -59,12 +59,6 @@ def jsonify_pixel_data():
     img_id = request.args.get("img_id")
     pixel_data = get_pixel_data(img_id)
     return jsonify(pixel_data)
-
-
-@app.route('/upload-image', methods=["GET"])
-def upload_image():
-    """Upload image via form"""
-    return render_template("homepage.html")
 
 
 @app.route('/process-image', methods=["POST"])
@@ -106,9 +100,8 @@ def process_canvas():
     # Convert and Resize Image and Analyze Pixels
     convert_resize_image(img_path, privacy)
     pillow_analyze_image(img_path)
-    # Get Pixel Data Corresponding to img_id and Jsonify
-    pixel_data = get_pixel_data(new_img_id)
-    return jsonify(pixel_data)
+    # Return redirect
+    return redirect("/")
 
 
 @app.route('/register', methods=["GET"])
@@ -224,6 +217,7 @@ def convert_resize_image(img_url, privacy):
     img = img.resize((width_size, baseheight), PILimage.ANTIALIAS)
     img.save(img_url)
 
+
     #still need to set whether image is private or public
     if privacy == 'private':
         private = True
@@ -235,11 +229,14 @@ def convert_resize_image(img_url, privacy):
     else:
         user_id = None
 
-    new_img = Image(img_url=img_url,
-                    user_id=user_id,
-                    private=private)
-    db.session.add(new_img)
-    db.session.commit()
+    # Check if img_url in database, if not, add image to table
+    db_img_url = Image.query.filter(Image.img_url == img_url).first()
+    if not db_img_url:
+        new_img = Image(img_url=img_url,
+                        user_id=user_id,
+                        private=private)
+        db.session.add(new_img)
+        db.session.commit()
 
 
 def pillow_analyze_image(img_url):

@@ -6,36 +6,11 @@
 
 <div id="selection">
   <br>
-  <form>
-    <input type="button" name="selectImg" value="Select Image" onclick="showImages()"></input>
-    <br>
-    <input type="button" name="uploadImg" value="Upload Image" onclick="showUploadForm()"></input>
-    <br>
-    <input type="button" name="drawImg" value="Draw Image" onclick="showCanvas()"></input>
-  </form>
+    <button id="selectImageBtn">Select Image</button>
+    <button id="uploadFormBtn">Upload Image</button>
+    <button id="canvasBtn">Draw Image</button>
 </div>
 
-<script>
-
-function showImages() {
-  document.getElementById('images').style.display = "block";
-  document.getElementById('uploadForm').style.display = "none";
-  document.getElementById('myCanvas').style.display = "none";
-}
-
-function showUploadForm() {
-  document.getElementById('uploadForm').style.display = "block";
-  document.getElementById('images').style.display = "none";
-  document.getElementById('myCanvas').style.display = "none";
-}
-
-function showCanvas() {
-  document.getElementById('myCanvas').style.display = "block";
-  document.getElementById('images').style.display = "none";
-  document.getElementById('uploadForm').style.display = "none";
-}
-
-</script>
 
 <div class="parent">
   <img id="base" src="/static/images/base.png" height="750">
@@ -45,168 +20,70 @@ function showCanvas() {
   <img id="playButton" src="/static/images/playbutton.png" height="750">
 </div>
 
+<form id="play" style="display: none;">
+  <input type="hidden" id="img_id_in" name="img_id">
+  <input type="submit" value="Play">
+</form>
 
 <!-- *********************************************************************** -->
 <!-- Play button in ANS interface sends img_id to route that gets pixel data and passes to JavaScript -->
-<div id="images" style="display:none">
-  <form id="play">
-    <input type="hidden" id="img_id_in" name="img_id">
-    <input type="submit" value="Play">
-  </form>
-  <!-- Playable images (pre-analyzed) -->
-    {% for img in imgs %}
-    <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
-    {% endfor %}
-<script>
-    $('.playables').on('click', function() {
-        //get image id, load image in interface, pass image id to hidden input
-        let queueImg = document.querySelector("#queue");
-        let getSrc = $(this).attr("src")
-        queueImg.setAttribute('src', getSrc);
-        let imgId = $(this).attr("id");
-        $("#img_id_in").val(imgId);
-    });
-</script>
+<div id="selectImageModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeSelect">&times;</span>
+      <div id="images">
+        <!-- Playable images (pre-analyzed) -->
+          {% for img in imgs %}
+            <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
+          {% endfor %}
+      </div>
+  </div>
 </div>
+
+<!-- Modal Scripts -->
+<script src="/static/js/select_image.js"></script>
+
 
 <!-- *********************************************************************** -->
 <!-- Upload image form -->
-<div id="uploadForm" style="display:none">
-<form action="/process-image" enctype="multipart/form-data" method="POST">
-    <input type="file" name ="pic" accept="image/*"/>
-    <br>
-    <input type="radio" name="privacy" value="private">Private
-    <input type="radio" name="privacy" value="public">Public
-    <br>
-    <input type="submit"/>
-</form>
+<div id="uploadFormModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeUpload">&times;</span>
+      <div id="uploadForm">
+        <form action="/process-image" enctype="multipart/form-data" method="POST">
+          <input type="file" name ="pic" accept="image/*"/>
+          <br>
+          <input type="radio" name="privacy" value="private">Private
+          <input type="radio" name="privacy" value="public">Public
+          <br>
+          <input type="submit"/>
+        </form>
+      </div>
+  </div>
 </div>
+
+<!-- Modal Scripts -->
+<script src="/static/js/upload_form.js"></script>
 
 <!-- *********************************************************************** -->
 <!-- Canvas -->
-<div id="myCanvas" style="display:none">
-    <canvas id="canvas" width="240" height="360" style="border:1px solid #000000; background-color: black;"></canvas>
+<div id="myCanvasModal" class="modal">
+  <div id="modal-content" class="modal-content">
+    <span class="close" id="closeCanvas">&times;</span>
+      <div id="myCanvas">
+        <canvas id="canvas" width="400" height="600" style="border:1px solid #000000; background-color: black;"></canvas>
 
-    <p class="toolList">
-        <button id="clearCanvas" type="button">Clear</button>
-        <button id="pen" type="button">Pen</button>
-        <button id="eraser" type="button">Eraser</button>
-        <button id="saveCanvas" type="button">Save/Play</button>
-    </p>
+        <p class="toolList">
+            <button id="clearCanvas" type="button">Clear</button>
+            <button id="pen" type="button">Pen</button>
+            <button id="eraser" type="button">Eraser</button>
+            <button id="saveCanvas" type="button">Save</button>
+        </p>
+    </div>
+  </div>
 </div>
 
-<script>
-context = document.getElementById('canvas').getContext("2d");
-context.fillStyle="black";
-let colorBlack = "black";
-let colorWhite = "white";
-let curColor = colorWhite;
-let clickX = new Array();
-let clickY = new Array();
-let clickDrag = new Array();
-let clickColor = new Array;
-let paint;
-
-$('#canvas').mousedown(function(e){
-  let mouseX = e.pageX - this.offsetLeft;
-  let mouseY = e.pageY - this.offsetTop;
-        
-  paint = true;
-
-  addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, false, curColor);
-  redraw();
-});
-
-$('#canvas').mousemove(function(e){
-  if(paint){
-    addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true, curColor);
-
-    redraw();
-  }
-});
-
-$('#canvas').mouseup(function(e){
-  paint = false;
-});
-
-$('#canvas').mouseleave(function(e){
-  paint = false;
-});
-
-function addClick(x, y, dragging, color){
-  clickX.push(x);
-  clickY.push(y);
-  clickDrag.push(dragging);
-  clickColor.push(color);
-}
-
-function redraw(){
-  context.lineJoin = "square";
-  context.lineWidth = 3;
-            
-  for(let i=0; i < clickX.length; i++) {        
-    context.beginPath();
-    if(clickDrag[i] && i){
-      context.moveTo(clickX[i-1], clickY[i-1]);
-     }else{
-       context.moveTo(clickX[i]-1, clickY[i]);
-     }
-     context.strokeStyle = clickColor[i];
-     context.lineTo(clickX[i], clickY[i]);
-     context.stroke();
-     context.closePath();
-  }
-}
-
-// ***************************************************************** 
-// Event Listeners:
-
-// Clear Canvas:
-document.getElementById('clearCanvas').addEventListener('click', function(){
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height); 
-    clickX = new Array();
-    clickY = new Array();
-    clickDrag = new Array();
-    context.beginPath();
-});
-
-// Select Eraser Tool:
-document.getElementById('eraser').addEventListener('click', function() {
-    curColor = colorBlack;
-});
-
-// Select Pen Tool:
-document.getElementById('pen').addEventListener('click', function() {
-    curColor = colorWhite;
-});
-
-
-// Save Canvas (get URL to pass to app route):
-document.getElementById('saveCanvas').addEventListener('click', function(){
-    let canvas = document.getElementById('canvas');
-        let dataUrl = canvas.toDataURL('image/jpeg');
-        let blobBin = atob(dataUrl.split(',')[1]);
-        let array = [];
-        for (let i = 0; i <blobBin.length; i++) {
-            array.push(blobBin.charCodeAt(i));
-        }
-
-        let file = new Blob([new Uint8Array(array)], {type: 'image/jpg'});
-
-        let formData = new FormData();
-        formData.append("myFileName", file);
-
-
-        $.ajax({
-            type: 'POST',
-            url: '/process-canvas',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: playSynths
-        });
-});
-</script>
+<!-- Canvas and Modal Scripts -->
+<script src="/static/js/drawing_canvas.js"></script>
 
 
 <script src="/static/js/flocking/flocking-all.js"></script>

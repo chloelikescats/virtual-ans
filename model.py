@@ -51,7 +51,6 @@ class ImageColumn(db.Model):
 
     img_col_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     img_id = db.Column(db.Integer, db.ForeignKey('images.img_id'), nullable=False)
-    # col_num = db.Column(db.Integer, nullable=False)
     pixel_array = db.Column(db.ARRAY(db.Integer), nullable=False)
 
 
