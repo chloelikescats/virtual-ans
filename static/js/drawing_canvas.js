@@ -115,6 +115,8 @@ document.getElementById('saveCanvas').addEventListener('click', function(){
     let file = new Blob([new Uint8Array(array)], {type: 'image/jpg'});
     let formData = new FormData();
     formData.append("myFileName", file);
+    let privacy = $("input[name='privacy']:checked").val();
+    formData.append('privacy', privacy);
 
     $.ajax({
         type: 'POST',

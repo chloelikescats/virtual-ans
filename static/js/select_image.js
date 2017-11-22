@@ -16,10 +16,11 @@ if (userImages) {
   }
 }
   $('.playables').on('click', function() {
+      selectImageModal.style.display = "none";
       //get image id, load image in interface, pass image id to hidden input
       let queueImg = document.querySelector("#queue");
-      let getSrc = $(this).attr("src")
-      queueImg.setAttribute('src', getSrc);
+      let imgSrc = $(this).attr("src")
+      queueImg.setAttribute('src', imgSrc);
       let imgId = $(this).attr("id");
       $("#img_id_in").val(imgId);
   });
@@ -46,10 +47,3 @@ selectImageBtn.onclick = function() {
 spanSelect.onclick = function() {
     selectImageModal.style.display = "none";
 }
-
-// When the user clicks anywhere outside of the modal, close it
-// window.onclick = function(event) {
-//     if (event.target == selectImageModal) {
-//         selectImageModal.style.display = "none";
-//     }
-// }

@@ -16,12 +16,37 @@
     position: absolute;
     top: 0;
     left: 0;
+    will-changge: contents;
+    will-change: left;
 }
 
 #queue {
     position: absolute;
     top: 121px;
     left: 305px;
+    will-changge: contents;
+    will-change: left;
+}
+
+
+#animated-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation-name: playAnimation;
+    animation-duration: 1s;
+    animation-play-state: paused;
+    animation-fill-mode: forwards;
+}
+
+@keyframes playAnimation {
+    0% {left: 0;}
+    100% {left: -205px;}
+}
+
+@keyframe resetAnimation {
+    0% {left: -205px;}
+    100%{left: 0;}
 }
 
 #top {
@@ -39,7 +64,7 @@
 #play {
     position: relative;
     top: 678px;
-    left: 655px;
+    left: 632px;
 }
 
 /*MODAL*/

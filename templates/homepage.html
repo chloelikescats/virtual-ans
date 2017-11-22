@@ -14,8 +14,10 @@
 
 <div class="parent">
   <img id="base" src="/static/images/base.png" height="750">
-  <img id="mid" src="/static/images/mid.png" height="750">
-  <img id="queue"src="/static/images/black.png"  height="250px">
+  <div id="animated-elements">
+    <img class="target" id="mid" src="/static/images/mid.png" height="750">
+    <img class="target" id="queue" src="/static/images/black.png"  height="250px">
+  </div>
   <img id="top" src="/static/images/top.png" height="750">
   <img id="playButton" src="/static/images/playbutton.png" height="750">
 </div>
@@ -25,6 +27,8 @@
   <input type="hidden" id="img_id_in" name="img_id">
   <input type="submit" value="Play">
 </form>
+
+<button id="stop">Stop</button>
 
 <!-- *********************************************************************** -->
 <!-- Play button in ANS interface sends img_id to route that gets pixel data and passes to JavaScript -->
@@ -90,14 +94,21 @@
   <div id="modal-content" class="modal-content">
     <span class="close" id="closeCanvas">&times;</span>
       <div id="myCanvas">
+
+        <!-- Canvas Element -->
         <canvas id="canvas" width="400" height="600" style="border:1px solid #000000; background-color: black;"></canvas>
 
+        <!-- Canvas tools -->
         <p class="toolList">
-            <button id="clearCanvas" type="button">Clear</button>
-            <button id="pen" type="button">Pen</button>
-            <button id="eraser" type="button">Eraser</button>
-            <button id="saveCanvas" type="button">Save</button>
+          <button id="clearCanvas" type="button">Clear</button>
+          <button id="pen" type="button">Pen</button>
+          <button id="eraser" type="button">Eraser</button>
         </p>
+
+        <!-- Save and set privacy -->
+          <input type="radio" name="privacy" value="private">Private
+          <input type="radio" name="privacy" value="public" checked>Public
+          <button id="saveCanvas" type="button">Save</button>
     </div>
   </div>
 </div>

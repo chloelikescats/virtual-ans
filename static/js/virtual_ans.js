@@ -58,25 +58,35 @@ function getJSON(evt) {
 // Function that unpacks a column data every second
 function playSynths(result) {
     environment.start();
-    // virtual_ans.play();
 
     let columnArray = result['column'];
-    // I want to get next pixelColumn and set muls once every second (for now)
     let columnNum = 0;
+
+    // Get image duration for CSS Animation
+    let timePerPixel = 250;
+    let pixelWidth = columnArray.length;
+    let imgDuration = (pixelWidth * timePerPixel) / 1000;
+
+    document.getElementById("animated-elements")
+            .style["animation-duration"] = imgDuration + 's';
+    $('#animated-elements').css('animation-play-state', 'running');
 
     let interval = setInterval(function () {
         let pixelColumn = columnArray[columnNum];
         playPixelColumn(pixelColumn);
-
-
         columnNum += 1;
-        console.log(columnArray.length);
 
+    $("#stop").on('click', function(){
+        $('#animated-elements').css('animation-play-state', 'paused');
+        clearInterval(interval);
+        environment.stop();
+    });
+        // At end, clear interval and stop environment
         if (columnNum >= columnArray.length) {
             clearInterval(interval);
             environment.stop();
         }
-    }, 250)
+    }, timePerPixel)
 }
 
 
@@ -97,3 +107,5 @@ function playPixelColumn(pixelColumn) {
         i+=1;
     }
 }
+
+

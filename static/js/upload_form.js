@@ -22,11 +22,11 @@ spanUpload.onclick = function() {
 }
 
 // When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target == uploadFormModal) {
-        uploadFormModal.style.display = "none";
-    }
-}
+// window.onclick = function(event) {
+//     if (event.target == uploadFormModal) {
+//         uploadFormModal.style.display = "none";
+//     }
+// }
 
 let imgFile;
 $("#image-file").on('change', function(evt) {
@@ -36,9 +36,12 @@ $("#image-file").on('change', function(evt) {
 $("#uploadImage").on('click', function(evt) {
     evt.preventDefault();
 
+    //Close Modal
+    uploadFormModal.style.display = "none";
+
+    //Package formData
     let formData = new FormData();
     formData.append('img_file', imgFile[0]);
-    //This should be fine...
     let privacy = $("input[name='privacy']:checked").val();
     formData.append('privacy', privacy);
 

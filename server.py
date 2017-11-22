@@ -22,9 +22,7 @@ app.jinja_env.undefined = StrictUndefined
 #*****************************************************#
 # Routes
 """TO DO:
-- In modal
-    - Image library (public)
-    - User images (private and public)
+
 """
 
 @app.route('/')
@@ -88,7 +86,7 @@ def process_image():
 def process_canvas():
     """Convert and Analyze image from Canvas, add to DB"""
     img = request.files['myFileName']
-    privacy = False
+    privacy = request.form.get("privacy")
 
     if 'user_id' in session:
         user_id = session['user_id']
