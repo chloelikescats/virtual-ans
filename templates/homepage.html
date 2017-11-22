@@ -20,6 +20,7 @@
   <img id="playButton" src="/static/images/playbutton.png" height="750">
 </div>
 
+<!-- Play button -->
 <form id="play" style="display: none;">
   <input type="hidden" id="img_id_in" name="img_id">
   <input type="submit" value="Play">
@@ -31,10 +32,27 @@
   <div class="modal-content">
     <span class="close" id="closeSelect">&times;</span>
       <div id="images">
-        <!-- Playable images (pre-analyzed) -->
+        <!-- Private playable images -->
+          {% if 'user_id' in session %}
+            <button id="userImages">Your Images</button>
+            <button id="publicImages">Public Images</button>
+          {% endif %}
+
+        <!-- User's playable images (pre-analyzed) -->
+        <div id="user-playables" style="display: none;">
+          {% for img in user_imgs %}
+            <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
+          {% endfor %}
+        </div>
+
+        <!-- Public playable images (pre-analyzed) -->
+        <div id="public-playables">
           {% for img in imgs %}
             <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
           {% endfor %}
+        </div>
+
+
       </div>
   </div>
 </div>
@@ -50,16 +68,18 @@
     <span class="close" id="closeUpload">&times;</span>
       <div id="uploadForm">
         <form action="/process-image" enctype="multipart/form-data" method="POST">
-          <input type="file" name ="pic" accept="image/*"/>
+          <input id="image-file" type="file" name="pic" accept="image/*"/>
+
           <br>
           <input type="radio" name="privacy" value="private">Private
-          <input type="radio" name="privacy" value="public">Public
+          <input type="radio" name="privacy" value="public" checked>Public
           <br>
-          <input type="submit"/>
+          <input id="uploadImage" type="submit"/>
         </form>
       </div>
   </div>
 </div>
+
 
 <!-- Modal Scripts -->
 <script src="/static/js/upload_form.js"></script>

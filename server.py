@@ -22,28 +22,28 @@ app.jinja_env.undefined = StrictUndefined
 #*****************************************************#
 # Routes
 """TO DO:
-- Image library (public)
-- User images (private and public)
-- About Page
+- In modal
+    - Image library (public)
+    - User images (private and public)
 """
 
 @app.route('/')
 def index():
     """Homepage."""
+    if 'user_id' in session:
+        user_id = session['user_id']
+        user_imgs = Image.query.filter(Image.user_id == user_id).all()
+    else:
+        user_imgs = []
+
     imgs = Image.query.filter(Image.private == False).all()
-    return render_template("homepage.html", imgs=imgs)
+    return render_template("homepage.html", imgs=imgs, user_imgs=user_imgs)
+
 
 @app.route('/about')
 def about_page():
     """About page"""
     return render_template("about.html")
-
-
-# @app.route('/image-library')
-# def image_library():
-#     """Public image library"""
-#     # Redirect to homepage when image is selected.
-#     return render_template("image-library.html")
 
 
 @app.route('/frequencies.json')
@@ -61,19 +61,30 @@ def jsonify_pixel_data():
     return jsonify(pixel_data)
 
 
-@app.route('/process-image', methods=["POST"])
+@app.route('/process-image.json', methods=["POST"])
 def process_image():
     """Convert and analyze image, add to DB"""
+    # privacy = request.form.get("privacy")
+    # img = request.files['pic']
     privacy = request.form.get("privacy")
-    img = request.files['pic']
+    img = request.files["img_file"]
+
+    # Define path and save image to local directory
     img_path = UPLOAD_FOLDER + img.filename
     img.save(img_path)
-    convert_resize_image(img_path, privacy)
+
+    # Convert image and analyze, redirect to homepage
+    upload = convert_resize_image(img_path, privacy)
+    img_id = upload.img_id
+    img_url = upload.img_url
+    results = {"id": img_id, "url": img_url}
     pillow_analyze_image(img_path)
-    return redirect("/")
+
+    # Return results
+    return jsonify(results)
 
 
-@app.route('/process-canvas', methods=["POST"])
+@app.route('/process-canvas.json', methods=["POST"])
 def process_canvas():
     """Convert and Analyze image from Canvas, add to DB"""
     img = request.files['myFileName']
@@ -83,6 +94,7 @@ def process_canvas():
         user_id = session['user_id']
     else:
         user_id = None
+
     # Add DB record with dummy URL
     new_img_record = Image(user_id=user_id,
                            img_url="")
@@ -98,10 +110,14 @@ def process_canvas():
     new_img_record.img_url = img_path
     db.session.commit()
     # Convert and Resize Image and Analyze Pixels
-    convert_resize_image(img_path, privacy)
+    upload = convert_resize_image(img_path, privacy)
+    img_id = upload.img_id
+    img_url = upload.img_url
+    results = {"id": img_id, "url": img_url}
     pillow_analyze_image(img_path)
-    # Return redirect
-    return redirect("/")
+
+    # Return results
+    return jsonify(results)
 
 
 @app.route('/register', methods=["GET"])
@@ -230,14 +246,16 @@ def convert_resize_image(img_url, privacy):
         user_id = None
 
     # Check if img_url in database, if not, add image to table
-    db_img_url = Image.query.filter(Image.img_url == img_url).first()
-    if not db_img_url:
+    db_img = Image.query.filter(Image.img_url == img_url).first()
+    if not db_img:
         new_img = Image(img_url=img_url,
                         user_id=user_id,
                         private=private)
         db.session.add(new_img)
         db.session.commit()
-
+        return new_img
+    else:
+        return db_img
 
 def pillow_analyze_image(img_url):
     """Analyze each pixel with Pillow and add data to image_columns"""

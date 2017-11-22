@@ -81,13 +81,15 @@ function redraw(){
 // Event Listeners:
 
 // Clear Canvas:
-document.getElementById('clearCanvas').addEventListener('click', function(){
+document.getElementById('clearCanvas').addEventListener('click', clearCanvas);
+
+function clearCanvas() {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height); 
     clickX = new Array();
     clickY = new Array();
     clickDrag = new Array();
     context.beginPath();
-});
+}
 
 // Select Eraser Tool:
 document.getElementById('eraser').addEventListener('click', function() {
@@ -102,27 +104,33 @@ document.getElementById('pen').addEventListener('click', function() {
 
 // Save Canvas (get URL to pass to app route):
 document.getElementById('saveCanvas').addEventListener('click', function(){
+    canvasModal.style.display = "none";
     let canvas = document.getElementById('canvas');
-        let dataUrl = canvas.toDataURL('image/jpeg');
-        let blobBin = atob(dataUrl.split(',')[1]);
-        let array = [];
-        for (let i = 0; i < blobBin.length; i++) {
-            array.push(blobBin.charCodeAt(i));
-        }
-        let file = new Blob([new Uint8Array(array)], {type: 'image/jpg'});
-        let formData = new FormData();
-        formData.append("myFileName", file);
+    let dataUrl = canvas.toDataURL('image/jpeg');
+    let blobBin = atob(dataUrl.split(',')[1]);
+    let array = [];
+    for (let i = 0; i < blobBin.length; i++) {
+        array.push(blobBin.charCodeAt(i));
+    }
+    let file = new Blob([new Uint8Array(array)], {type: 'image/jpg'});
+    let formData = new FormData();
+    formData.append("myFileName", file);
 
-        $.ajax({
-            type: 'POST',
-            url: '/process-canvas',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(){
-              console.log("I saved it!")
-            }
-        });
+    $.ajax({
+        type: 'POST',
+        url: '/process-canvas.json',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(results) {
+            let queueImg = document.querySelector("#queue");
+            let imgSrc = results['url'];
+            queueImg.setAttribute('src', imgSrc);
+            let imgId = results['id'];
+            $("#img_id_in").val(imgId);
+        }
+    });
+    clearCanvas();
 });
 
 // Get the modal
@@ -134,19 +142,16 @@ let canvasBtn = document.getElementById("canvasBtn");
 // Get the <span> element that closes the modal
 let spanCanvas = document.getElementById("closeCanvas");
 
+// Get the play button
+let canvasPlayButton = document.getElementById("play");
+
 // When the user clicks on the button, open the modal 
 canvasBtn.onclick = function() {
     canvasModal.style.display = "block";
+    canvasPlayButton.style.display = "block";
 }
 
 // When the user clicks on <span> (x), close the modal
 spanCanvas.onclick = function() {
     canvasModal.style.display = "none";
 }
-
-// When the user clicks anywhere outside of the modal, close it
-// window.onclick = function(event) {
-//       if (event.target.type !== "submit") {
-//         $(".modal").hide();
-//       }
-// }

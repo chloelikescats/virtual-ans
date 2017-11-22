@@ -1,4 +1,20 @@
+let publicImages = document.getElementById('publicImages');
+let userImages = document.getElementById('userImages');
+let publicPlayables = document.getElementById('public-playables');
+let userPlayables = document.getElementById('user-playables');
 
+if (publicImages) {
+  publicImages.onclick = function() {
+    publicPlayables.style.display = "block";
+    userPlayables.style.display = "none";
+  }
+}
+if (userImages) {
+  userImages.onclick = function() {
+    userPlayables.style.display = "block";
+    publicPlayables.style.display = "none";
+  }
+}
   $('.playables').on('click', function() {
       //get image id, load image in interface, pass image id to hidden input
       let queueImg = document.querySelector("#queue");
@@ -17,12 +33,13 @@ let selectImageBtn = document.getElementById("selectImageBtn");
 // Get the <span> element that closes the modal
 let spanSelect = document.getElementById("closeSelect");
 
-let playButton = document.getElementById("play");
+// Get the play button
+let selectPlayButton = document.getElementById("play");
 
 // When the user clicks on the button, open the modal 
 selectImageBtn.onclick = function() {
     selectImageModal.style.display = "block";
-    playButton.style.display = "block";
+    selectPlayButton.style.display = "block";
 }
 
 // When the user clicks on <span> (x), close the modal
