@@ -16,6 +16,7 @@
 
 </div>
 
+<!-- The ANS Image Layers -->
 <div class="parent">
   <img id="base" src="/static/images/base.png" height="750">
   <div id="animated-play">
@@ -37,35 +38,65 @@
 
 <!-- *********************************************************************** -->
 <!-- Play button in ANS interface sends img_id to route that gets pixel data and passes to JavaScript -->
-<!-- Large modal -->
 <div class="modal fade select-image-modal" tabindex="-1" role="dialog" aria-labelledby="selectImageModal">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-      <div id="images">
-        <!-- Private playable images -->
-          {% if 'user_id' in session %}
-            <button id="userImages">Your Images</button>
-            <button id="publicImages">Public Images</button>
-          {% endif %}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="selectImageModalLabel">Select Image</h4>
+            <!-- Private playable images -->
+            {% if 'user_id' in session %}
+              <button id="userImages">Your Images</button>
+              <button id="publicImages">Public Images</button>
+            {% endif %}
+        </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-xs-12">      
+                <div id="images">
+              <!-- User's playable images (pre-analyzed) -->
+              <div id="user-playables" style="display: none;">
+                {% for img in user_imgs %}
 
-        <!-- User's playable images (pre-analyzed) -->
-          <div id="user-playables" style="display: none;">
-            {% for img in user_imgs %}
-              <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
-            {% endfor %}
-          </div>
+                  <!-- Heart button images if user_id in session -->
+                  {% if 'user_id' in session %}
+                    {% if img.has_loved(session['user_id']) %}
+                      <button disabled><span class="glyphicon glyphicon-heart" aria-hidden="true"></span></button>
+                    {% else %}
+                      <button id='{{ img.img_id }}' class='heart' data-review-id='{{ img.img_id }}'><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span></button>
+                    {% endif %}
+                  {% endif %}
 
-        <!-- Public playable images (pre-analyzed) -->
-          <div id="public-playables">
-            {% for img in imgs %}
-              <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
-            {% endfor %}
+                  <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
+                {% endfor %}
+              </div>
+
+            <!-- Public playable images (pre-analyzed) -->
+              <div id="public-playables">
+                {% for img in imgs %}
+
+                  <!-- Heart button images if user_id in session -->
+                  {% if 'user_id' in session %}
+                    {% if img.has_loved(session['user_id']) %}
+                      <button disabled><span class="glyphicon glyphicon-heart" aria-hidden="true"></span></button>
+                    {% else %}
+                      <button id='{{ img.img_id }}' class='heart' data-review-id='{{ img.img_id }}'><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span></button>
+                    {% endif %}
+                  {% endif %}
+
+                  <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
+                {% endfor %}
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+
+
 
 <!-- Modal Scripts -->
 <script src="/static/js/select_image.js"></script>
@@ -76,16 +107,25 @@
 <div class="modal fade upload-image-modal" tabindex="-1" role="dialog" aria-labelledby="uploadImageModal">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-      <div id="uploadForm">
-        <form action="/process-image" enctype="multipart/form-data" method="POST">
-          <input id="image-file" type="file" name="pic" accept="image/*"/>
-
-          <br>
-          <input type="radio" name="privacy" value="private">Private
-          <input type="radio" name="privacy" value="public" checked>Public
-          <br>
-          <input id="uploadImage" type="submit"/>
-        </form>
+      <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="uploadImageModalLabel">Upload Image</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <div id="uploadForm">
+              <form action="/process-image" enctype="multipart/form-data" method="POST">
+                <input id="image-file" type="file" name="pic" accept="image/*"/>
+                <br>
+                <input type="radio" name="privacy" value="private"> Private
+                <input type="radio" name="privacy" value="public" checked> Public
+                <br>
+                <input class="btn btn-primary" id="uploadImage" type="submit"/>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -101,22 +141,29 @@
 <div class="modal fade canvas-modal" tabindex="-1" role="dialog" aria-labelledby="canvasModal">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-      <div id="myCanvas">
-
-        <!-- Canvas Element -->
-        <canvas id="canvas" width="400" height="600" style="border:1px solid #000000; background-color: black;"></canvas>
-
-        <!-- Canvas tools -->
-        <p class="toolList">
-          <button id="clearCanvas" type="button">Clear</button>
-          <button id="pen" type="button">Pen</button>
-          <button id="eraser" type="button">Eraser</button>
-        </p>
-
-        <!-- Save and set privacy -->
-          <input type="radio" name="privacy" value="private">Private
-          <input type="radio" name="privacy" value="public" checked>Public
-          <button id="saveCanvas" type="button">Save</button>
+      <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 id="canvas-modal-title" class="modal-title" id="canvasModalLabel">Draw Image</h4>
+            <!-- Save and set privacy -->
+            <input type="radio" name="privacy" value="private"> Private
+            <input type="radio" name="privacy" value="public" checked> Public
+            <button class="btn btn-primary" id="saveCanvas" type="button">Save</button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <!-- Canvas tools -->
+              <div id="canvas-tools">
+                <button class="btn btn-primary" id="clearCanvas" type="button">Clear</button>
+                <button class="btn btn-primary" id="pen" type="button">Pen</button>
+                <button class="btn btn-primary" id="eraser" type="button">Eraser</button>
+              </div>
+            <div id="myCanvas">
+              <!-- Canvas Element -->
+              <canvas id="canvas" width="400" height="600" style="border:1px solid #000000; background-color: black;"></canvas>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

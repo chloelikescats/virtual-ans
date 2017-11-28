@@ -1,18 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-
-    <h2>Login</h2>
-    
-    <form action="/login" method="POST">
-      Enter your email address:<br>
-      <input type="text" name="email" required> 
-      <br>
-      <br>
-      Enter your password:<br>
-      <input type="password" name="password" required> 
-      <br>
-      <br>
-      <input type="submit" value="Log In!">
-    </form>
-
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>Login</h2>
+      <form action="/login" method="POST">
+        Enter your email address:<br>
+        <input type="text" name="email" required> 
+        <br>
+        <br>
+        Enter your password:<br>
+        <input type="password" name="password" required> 
+        <br>
+        <br>
+        <input type="submit" value="Log In!">
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

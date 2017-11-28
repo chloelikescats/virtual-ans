@@ -2,7 +2,6 @@ body {
     /*background-color: #F9D749 !important;*/
     background: linear-gradient(to right, #FCDC67, #EDB500);
     font-family: 'Russo One', sans-serif !important;
-    padding-bottom: 50px !important;
 }
 
 .navbar {
@@ -127,7 +126,6 @@ body {
     left: 0;
 }
 
-
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
@@ -137,9 +135,31 @@ body {
     width: 100%; /* Could be more or less, depending on screen size */
 }
 
+#canvas-modal-title {
+    display: inline;
+    padding-right: 10px;
+}
+
+#saveCanvas {
+    margin-left: 10px;
+}
+
+.playables {
+    padding: 10px;
+}
+
+#uploadImage {
+    margin-top: 15px;
+}
+
 #canvas {
     margin: 20px 25%;
     width: 50%;
+}
+
+#canvas-tools {
+    margin: auto;
+    width: 25%;
 }
 
 .carousel-inner img {

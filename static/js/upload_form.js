@@ -8,7 +8,7 @@ $("#uploadImage").on('click', function(evt) {
     evt.preventDefault();
 
     //Close Modal
-    uploadFormModal.style.display = "none";
+    $('.upload-image-modal').modal('hide');
 
     //Package formData
     let formData = new FormData();

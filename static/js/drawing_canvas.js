@@ -104,7 +104,7 @@ document.getElementById('pen').addEventListener('click', function() {
 
 // Save Canvas (get URL to pass to app route):
 document.getElementById('saveCanvas').addEventListener('click', function(){
-    canvasModal.style.display = "none";
+    $('.canvas-modal').modal('hide');
     let canvas = document.getElementById('canvas');
     let dataUrl = canvas.toDataURL('image/jpeg');
     let blobBin = atob(dataUrl.split(',')[1]);

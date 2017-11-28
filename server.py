@@ -44,6 +44,16 @@ def about_page():
     return render_template("about.html")
 
 
+@app.route('/heart-image', methods=['POST'])
+def like_process():
+    """Processes user's like of specific image."""
+    img_id = request.form['img_id']
+    heart = Heart(img_id=img_id, user_id=session['user_id'])
+    db.session.add(heart)
+    db.session.commit()
+    return 'Thanks for liking me!'
+
+
 @app.route('/frequencies.json')
 def jsonify_freqs():
     """Jsonify frequencies for Flocking"""

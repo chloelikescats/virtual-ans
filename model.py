@@ -43,6 +43,15 @@ class Image(db.Model):
                                                              self.img_url,
                                                              self.user_id)
 
+    def has_loved(self, user_id):
+        """ Tracks whether image has been liked by a certain user. """
+        user_heart = Heart.query.filter(Heart.img_id == self.img_id,
+                                            Heart.user_id == user_id).first()
+        if user_heart:
+            return True
+        else:
+            return False
+
 
 class ImageColumn(db.Model):
     """ Data from previously analyzed images for playback """
