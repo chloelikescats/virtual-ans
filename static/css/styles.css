@@ -1,3 +1,65 @@
+body {
+    /*background-color: #F9D749 !important;*/
+    background: linear-gradient(to right, #FCDC67, #EDB500);
+    font-family: 'Russo One', sans-serif !important;
+    padding-bottom: 50px !important;
+}
+
+.navbar {
+    background-color: #2D2D2D !important;
+    border-color: #8A4134 !important;
+}
+
+.navbar-brand {
+   color: #FFFFFF !important;
+   font-size: 1.5em !important;
+}
+
+.nav.navbar-nav li a {
+   color: #FFFFFF !important;
+ }
+
+.nav.navbar-nav a:hover {
+ color: #9A9A9A !important;
+ background-color: transparent !important;
+}
+
+.dropdown-toggle {
+    color: #FFFFFF !important;
+}
+
+.dropdown-toggle:hover {
+    color: #9A9A9A !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+.dropdown {
+    padding-top: 5px !important;
+}
+
+#selection {
+    position: relative;
+    margin: auto;
+    width: 30%;
+}
+
+.btn-primary, .btn-de:hover, .btn-primary:active, .btn-primary:visited {
+    background-color: #A01809 !important;
+}
+
+#stop {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#play {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 .parent {
     position: relative;
     top: 0;
@@ -24,12 +86,12 @@
     position: absolute;
     top: 121px;
     left: 305px;
-    will-changge: contents;
+    will-change: contents;
     will-change: left;
 }
 
 
-#animated-elements {
+#animated-play {
     position: absolute;
     top: 0;
     left: 0;
@@ -41,11 +103,21 @@
 
 @keyframes playAnimation {
     0% {left: 0;}
-    100% {left: -205px;}
+    100% {left: -180px;}
 }
 
-@keyframe resetAnimation {
-    0% {left: -205px;}
+#animated-reset {
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation-name: resetAnimation;
+    animation-duration: 3s;
+    animation-play-state: paused;
+}
+
+@keyframes resetAnimation {
+    /* Need to get left position and set */
+    0% {left: 0;} 
     100%{left: 0;}
 }
 
@@ -55,32 +127,6 @@
     left: 0;
 }
 
-#playButton {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-#play {
-    position: relative;
-    top: 678px;
-    left: 632px;
-}
-
-/*MODAL*/
-/* The Modal (background) */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0,0.4); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
 
 /* Modal Content/Box */
 .modal-content {
@@ -88,7 +134,7 @@
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 50%; /* Could be more or less, depending on screen size */
+    width: 100%; /* Could be more or less, depending on screen size */
 }
 
 #canvas {
@@ -96,17 +142,28 @@
     width: 50%;
 }
 
-/* The Close Button */
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+.carousel-inner img {
+  margin: auto;
 }
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+.about-image {
+    height: 200px;
+}
+
+#murzin {
+    margin: auto;
+    width: 75%;
+}
+
+#glinka-ans {
+    margin: auto;
+    width: 65%;
+}
+
+.carousel-inner .item img {
+  /*position: absolute;*/
+  top: 50%;
+  left: 35%;
+  max-height: 400px;
+  width: auto;
 }

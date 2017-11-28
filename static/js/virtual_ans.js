@@ -48,6 +48,9 @@ $("#play").on("submit", getJSON);
 
 // AJAX gets pixel data
 function getJSON(evt) {
+    $('#play').css("display", "none");
+    $('#stop').css("display", "block");
+    $('#stop').css("top", "3px");
     evt.preventDefault();
     let imgId = $("#img_id_in").val();
     $.get("/pixel_data.json", {"img_id": imgId}, playSynths);
@@ -67,24 +70,52 @@ function playSynths(result) {
     let pixelWidth = columnArray.length;
     let imgDuration = (pixelWidth * timePerPixel) / 1000;
 
-    document.getElementById("animated-elements")
+    if ($("#animated-reset").length != 0) {
+        //Replace id on animated elements with animated-play if id is animated-reset
+        $('#animated-reset').attr('id', 'animated-play');
+    }
+
+    document.getElementById("animated-play")
             .style["animation-duration"] = imgDuration + 's';
-    $('#animated-elements').css('animation-play-state', 'running');
+    $('#animated-play').css('animation-play-state', 'running');
 
     let interval = setInterval(function () {
         let pixelColumn = columnArray[columnNum];
         playPixelColumn(pixelColumn);
         columnNum += 1;
 
-    $("#stop").on('click', function(){
-        $('#animated-elements').css('animation-play-state', 'paused');
+    $("#stop").on('submit', function(evt){
+        evt.preventDefault();
+        $('#stop').css("display", "none");
+        $('#stop').css("top", "0");
+        $('#play').css("display", "block");
+
+        //Pause animated-play
+        $('#animated-play').css('animation-play-state', 'paused');
+        //Clear the interval (next play press, no prior pixel data will remain)
         clearInterval(interval);
+        //Stop the flocking environment
         environment.stop();
+        // let currentPosition = -((imgDuration / pixelWidth) * columnNum);
+        //This needs to select the resetAnimation animation
+        // keyframes.appendRule("0% {-left:" + currentPosition + "px}");
+        //Replace id on animated elements with animated-reset
+        $('#animated-play').attr('id', 'animated-reset');
+        //Set animated-reset to 'running'
+        $('#animated-reset').css('animation-play-state', 'running');
     });
         // At end, clear interval and stop environment
         if (columnNum >= columnArray.length) {
             clearInterval(interval);
             environment.stop();
+            $('#animated-play').attr('id', 'animated-reset');
+            //Set animated-reset to 'running'
+            $('#animated-reset').css('animation-play-state', 'running');
+            $('#stop').css("top", "0");
+            $('#stop').css("display", "none");
+            $('#play').css("display", "block");
+
+
         }
     }, timePerPixel)
 }

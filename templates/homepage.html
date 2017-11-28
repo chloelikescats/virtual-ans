@@ -5,36 +5,42 @@
 {% block content %}
 
 <div id="selection">
-  <br>
-    <button id="selectImageBtn">Select Image</button>
-    <button id="uploadFormBtn">Upload Image</button>
-    <button id="canvasBtn">Draw Image</button>
-</div>
+  <!-- Select Image Modal Button -->
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".select-image-modal">Select Image</button>
 
+  <!-- Upload Image Modal Button -->
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".upload-image-modal">Upload Image</button>
+
+  <!-- Canvas Modal Button -->
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".canvas-modal">Draw Image</button>
+
+</div>
 
 <div class="parent">
   <img id="base" src="/static/images/base.png" height="750">
-  <div id="animated-elements">
+  <div id="animated-play">
     <img class="target" id="mid" src="/static/images/mid.png" height="750">
     <img class="target" id="queue" src="/static/images/black.png"  height="250px">
   </div>
   <img id="top" src="/static/images/top.png" height="750">
-  <img id="playButton" src="/static/images/playbutton.png" height="750">
+  <!-- Play button -->
+  <form id="play" style="display: block;">
+    <input type="hidden" id="img_id_in" name="img_id">
+    <input type="image" src="/static/images/play.png" value="submit" height="750">
+  </form>
+  <!-- Show stop button on play button click -->
+  <form id="stop" style="display: none;">
+    <input type="image" src="/static/images/stop.png" value="submit" height="750">
+  </form>
 </div>
 
-<!-- Play button -->
-<form id="play" style="display: none;">
-  <input type="hidden" id="img_id_in" name="img_id">
-  <input type="submit" value="Play">
-</form>
-
-<button id="stop">Stop</button>
 
 <!-- *********************************************************************** -->
 <!-- Play button in ANS interface sends img_id to route that gets pixel data and passes to JavaScript -->
-<div id="selectImageModal" class="modal">
-  <div class="modal-content">
-    <span class="close" id="closeSelect">&times;</span>
+<!-- Large modal -->
+<div class="modal fade select-image-modal" tabindex="-1" role="dialog" aria-labelledby="selectImageModal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
       <div id="images">
         <!-- Private playable images -->
           {% if 'user_id' in session %}
@@ -43,21 +49,21 @@
           {% endif %}
 
         <!-- User's playable images (pre-analyzed) -->
-        <div id="user-playables" style="display: none;">
-          {% for img in user_imgs %}
-            <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
-          {% endfor %}
-        </div>
+          <div id="user-playables" style="display: none;">
+            {% for img in user_imgs %}
+              <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
+            {% endfor %}
+          </div>
 
         <!-- Public playable images (pre-analyzed) -->
-        <div id="public-playables">
-          {% for img in imgs %}
-            <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
-          {% endfor %}
+          <div id="public-playables">
+            {% for img in imgs %}
+              <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
+            {% endfor %}
+          </div>
         </div>
-
-
       </div>
+    </div>
   </div>
 </div>
 
@@ -67,9 +73,9 @@
 
 <!-- *********************************************************************** -->
 <!-- Upload image form -->
-<div id="uploadFormModal" class="modal">
-  <div class="modal-content">
-    <span class="close" id="closeUpload">&times;</span>
+<div class="modal fade upload-image-modal" tabindex="-1" role="dialog" aria-labelledby="uploadImageModal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
       <div id="uploadForm">
         <form action="/process-image" enctype="multipart/form-data" method="POST">
           <input id="image-file" type="file" name="pic" accept="image/*"/>
@@ -81,6 +87,7 @@
           <input id="uploadImage" type="submit"/>
         </form>
       </div>
+    </div>
   </div>
 </div>
 
@@ -90,9 +97,10 @@
 
 <!-- *********************************************************************** -->
 <!-- Canvas -->
-<div id="myCanvasModal" class="modal">
-  <div id="modal-content" class="modal-content">
-    <span class="close" id="closeCanvas">&times;</span>
+
+<div class="modal fade canvas-modal" tabindex="-1" role="dialog" aria-labelledby="canvasModal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
       <div id="myCanvas">
 
         <!-- Canvas Element -->
@@ -109,6 +117,7 @@
           <input type="radio" name="privacy" value="private">Private
           <input type="radio" name="privacy" value="public" checked>Public
           <button id="saveCanvas" type="button">Save</button>
+      </div>
     </div>
   </div>
 </div>

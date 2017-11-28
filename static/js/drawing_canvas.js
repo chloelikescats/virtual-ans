@@ -134,26 +134,3 @@ document.getElementById('saveCanvas').addEventListener('click', function(){
     });
     clearCanvas();
 });
-
-// Get the modal
-let canvasModal = document.getElementById('myCanvasModal');
-
-// Get the button that opens the modal
-let canvasBtn = document.getElementById("canvasBtn");
-
-// Get the <span> element that closes the modal
-let spanCanvas = document.getElementById("closeCanvas");
-
-// Get the play button
-let canvasPlayButton = document.getElementById("play");
-
-// When the user clicks on the button, open the modal 
-canvasBtn.onclick = function() {
-    canvasModal.style.display = "block";
-    canvasPlayButton.style.display = "block";
-}
-
-// When the user clicks on <span> (x), close the modal
-spanCanvas.onclick = function() {
-    canvasModal.style.display = "none";
-}

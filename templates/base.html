@@ -1,27 +1,56 @@
 <!doctype html>
 <html>
-<head>
+  <head>
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <title>Virtual ANS</title>
   {% block head %} put things needed in head here {% endblock %}
- <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
-</head>
+  <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
+   <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-<body>
-  <h1>Virtual ANS</h1>
-  <a href="/">Home</a>
-  <a href="/about">About</a>
-  {% if 'user_id' in session %}
-    <form action="/logout" method="POST">
-      <input type="submit" id="logout" value="Log Out">
-    </form>
-    <a href="/user-page/{{ session['user_id'] }}">Profile</a>
-  {% else %}
+  <link href="https://fonts.googleapis.com/css?family=Russo+One" rel="stylesheet">
 
-    <a href="/login">Log In</a>
-    <br>
-    <a href="/register">Register</a>
-  {% endif %}
+  <!-- Favicon -->
+    <link rel="shortcut icon" type="image/png" href="/static/images/favicon.png"/>
+    <link rel="shortcut icon" type="image/png" href="http://eg.com/favicon.png"/>
+  </head>
+
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-6">
+        <a class="navbar-brand" href="#">Virtual ANS
+        </a>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+           </button>
+            <ul class="nav navbar-nav">
+              <li><a href="/">Home</a></li>
+              <li><a href="/about">About</a></li>
+            <ul>
+        </div>
+        <div class="col-xs-6">
+        <ul class="nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Login / Register<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              {% if 'user_id' in session %}
+                <form action="/logout" method="POST">
+                <li><input type="submit" id="logout" value="Log Out"></li>
+                </form>
+              {% else %}
+                <li><a href="/login">Log In</a></li>
+                <li><a href="/register">Register</a></li>
+              {% endif %}
+            </ul>
+          </li>
+        </ul>
+      </div>
+  </div>
+</nav>
 
     {% with messages = get_flashed_messages() %}
          {% if messages %}
@@ -32,8 +61,10 @@
             </ul>
          {% endif %}
     {% endwith %}
-
+    
   {% block content %} put your content here {% endblock %}
 
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </body>
 </html>
