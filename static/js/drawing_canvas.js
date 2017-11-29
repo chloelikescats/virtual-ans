@@ -130,6 +130,7 @@ document.getElementById('saveCanvas').addEventListener('click', function(){
             queueImg.setAttribute('src', imgSrc);
             let imgId = results['id'];
             $("#img_id_in").val(imgId);
+            addImageToModal(imgSrc, imgId, privacy);
         }
     });
     clearCanvas();

@@ -148,6 +148,23 @@ body {
     padding: 10px;
 }
 
+.image-container {
+    position: relative;
+    display: inline;
+}
+
+.heart-button {
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    position: absolute;
+    top: -80px;
+    right: 10px;
+}
+
 #uploadImage {
     margin-top: 15px;
 }

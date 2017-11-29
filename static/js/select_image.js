@@ -16,9 +16,7 @@ if (userImages) {
   }
 }
 
-// let selectImageModal = document.querySelector(".select-image-modal")
-
-  $('.playables').on('click', function() {
+  $(document).on('click', '.playables', function() {
       $('.select-image-modal').modal('hide');
       //get image id, load image in interface, pass image id to hidden input
       let queueImg = document.querySelector("#queue");
@@ -28,18 +26,32 @@ if (userImages) {
       $("#img_id_in").val(imgId);
   });
 
-  // processes like buttons on reviews
-  let $heart = $('.heart');
-  function disableLike(results) {
-    toaster['unique'](results);
-  }
+
+  // Processes hearts on images
   function handleClick(evt) {
     evt.preventDefault();
     let formInputs = {
-      'img_id': evt.target.id,
+      'img_id': $(this).attr("id"),
     };
-    $.post('/heart-image', formInputs, disableLike);
-    $(this).prop('disabled', true);
-  }
-  $heart.on('click', handleClick);
+    let that = this;
+    $.post('/heart-image', formInputs, function() {
+      $(that).prop('disabled', true);    
+      $(that).attr("style", "color: red;");
+    });
 
+  }
+  $(document).on('click', '.heart', handleClick);
+
+  function addImageToModal(imgURL, imgID, privacy) {
+    let newImg = `<div class="image-container">
+    <img src= ${ imgURL } class="playables" id= ${ imgID } height="200px">
+        <button class="heart-button" data-review-id='${ imgID }'>
+        <span id='${ imgID }' class="heart glyphicon glyphicon-heart" aria-hidden="true" style="color: pink;"></span>
+        </button>
+    </div>`
+    if (privacy == true) {
+      $('#user-playables').append($(newImg));
+    } else {
+      $('#public-playables').append($(newImg));
+    }
+  }

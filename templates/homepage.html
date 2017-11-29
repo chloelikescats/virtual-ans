@@ -56,35 +56,38 @@
                 <div id="images">
               <!-- User's playable images (pre-analyzed) -->
               <div id="user-playables" style="display: none;">
-                {% for img in user_imgs %}
-
-                  <!-- Heart button images if user_id in session -->
-                  {% if 'user_id' in session %}
-                    {% if img.has_loved(session['user_id']) %}
-                      <button disabled><span class="glyphicon glyphicon-heart" aria-hidden="true"></span></button>
-                    {% else %}
-                      <button id='{{ img.img_id }}' class='heart' data-review-id='{{ img.img_id }}'><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span></button>
+                  {% for img in user_imgs %}
+                    <div class="image-container">
+                    <!-- Set image source -->
+                    <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
+                    <!-- Heart button images if user_id in session -->
+                    {% if 'user_id' in session %}
+                      {% if img.has_loved(session['user_id']) %}
+                        <button class="heart-button"  disabled><span class="glyphicon glyphicon-heart" aria-hidden="true" style="color: red;"></span></button>
+                      {% else %}
+                        <button class="heart-button"  data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' class="heart glyphicon glyphicon-heart" aria-hidden="true" style="color: pink;"></span></button>
+                      {% endif %}
                     {% endif %}
-                  {% endif %}
+                    </div>
+                  {% endfor %}
 
-                  <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
-                {% endfor %}
               </div>
 
             <!-- Public playable images (pre-analyzed) -->
               <div id="public-playables">
                 {% for img in imgs %}
-
+                <div class="image-container">
+                  <!-- Set image source -->
+                  <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
                   <!-- Heart button images if user_id in session -->
                   {% if 'user_id' in session %}
                     {% if img.has_loved(session['user_id']) %}
-                      <button disabled><span class="glyphicon glyphicon-heart" aria-hidden="true"></span></button>
+                      <button class="heart-button" disabled><span class="glyphicon glyphicon-heart" aria-hidden="true" style="color: red;"></span></button>
                     {% else %}
-                      <button id='{{ img.img_id }}' class='heart' data-review-id='{{ img.img_id }}'><span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span></button>
+                      <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' class="heart glyphicon glyphicon-heart" aria-hidden="true" style="color: pink;"></span></button>
                     {% endif %}
                   {% endif %}
-
-                  <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
+                </div>
                 {% endfor %}
               </div>
             </div>
