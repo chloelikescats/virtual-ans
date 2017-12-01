@@ -50,7 +50,7 @@ $("#play").on("submit", getJSON);
 function getJSON(evt) {
     $('#play').css("display", "none");
     $('#stop').css("display", "block");
-    $('#stop').css("top", "3px");
+    $('#stop').css("top", "648px");
     evt.preventDefault();
     let imgId = $("#img_id_in").val();
     $.get("/pixel_data.json", {"img_id": imgId}, playSynths);

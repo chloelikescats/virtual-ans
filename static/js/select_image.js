@@ -1,17 +1,28 @@
 let publicImages = document.getElementById('publicImages');
 let userImages = document.getElementById('userImages');
+let favedImages = document.getElementById('favedImages');
 let publicPlayables = document.getElementById('public-playables');
 let userPlayables = document.getElementById('user-playables');
+let favedPlayables = document.getElementById('faved-playables');
 
 if (publicImages) {
   publicImages.onclick = function() {
     publicPlayables.style.display = "block";
+    favedPlayables.style.display = "none";
     userPlayables.style.display = "none";
   }
 }
 if (userImages) {
   userImages.onclick = function() {
     userPlayables.style.display = "block";
+    favedPlayables.style.display = "none";
+    publicPlayables.style.display = "none";
+  }
+}
+if (favedImages) {
+    favedImages.onclick = function() {
+    favedPlayables.style.display = "block";
+    userPlayables.style.display = "none";
     publicPlayables.style.display = "none";
   }
 }
@@ -28,19 +39,26 @@ if (userImages) {
 
 
   // Processes hearts on images
-  function handleClick(evt) {
+  function handleClickLike(evt) {
     evt.preventDefault();
+    // add class unheart to button
     let formInputs = {
       'img_id': $(this).attr("id"),
     };
-    let that = this;
-    $.post('/heart-image', formInputs, function() {
-      $(that).prop('disabled', true);    
+    if ($(this).css("color") === "rgb(255, 0, 0)") {
+      let that = this;
+      $.post('/unheart-image', formInputs, function() {
+      $(that).attr("style", "color: pink;");
+      });
+    } else {
+      let that = this;
+      $.post('/heart-image', formInputs, function() { 
       $(that).attr("style", "color: red;");
-    });
-
+      });
+    }
   }
-  $(document).on('click', '.heart', handleClick);
+  $(document).on('click', '.heart', handleClickLike);
+
 
   function addImageToModal(imgURL, imgID, privacy) {
     let newImg = `<div class="image-container">

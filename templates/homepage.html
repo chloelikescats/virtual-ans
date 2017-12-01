@@ -27,11 +27,11 @@
   <!-- Play button -->
   <form id="play" style="display: block;">
     <input type="hidden" id="img_id_in" name="img_id">
-    <input type="image" src="/static/images/play.png" value="submit" height="750">
+    <input class="press_button" type="image" src="/static/images/play.png" value="submit" height="75">
   </form>
   <!-- Show stop button on play button click -->
   <form id="stop" style="display: none;">
-    <input type="image" src="/static/images/stop.png" value="submit" height="750">
+    <input class="press_button" type="image" src="/static/images/stop.png" value="submit" height="75">
   </form>
 </div>
 
@@ -47,6 +47,7 @@
             <!-- Private playable images -->
             {% if 'user_id' in session %}
               <button id="userImages">Your Images</button>
+              <button id="favedImages">Faved Images</button>
               <button id="publicImages">Public Images</button>
             {% endif %}
         </div>
@@ -55,41 +56,46 @@
               <div class="col-xs-12">      
                 <div id="images">
               <!-- User's playable images (pre-analyzed) -->
-              <div id="user-playables" style="display: none;">
+                  <div id="user-playables" style="display: none;">
                   {% for img in user_imgs %}
                     <div class="image-container">
                     <!-- Set image source -->
                     <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
                     <!-- Heart button images if user_id in session -->
                     {% if 'user_id' in session %}
-                      {% if img.has_loved(session['user_id']) %}
-                        <button class="heart-button"  disabled><span class="glyphicon glyphicon-heart" aria-hidden="true" style="color: red;"></span></button>
-                      {% else %}
-                        <button class="heart-button"  data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' class="heart glyphicon glyphicon-heart" aria-hidden="true" style="color: pink;"></span></button>
-                      {% endif %}
+                       <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span></button>
                     {% endif %}
                     </div>
                   {% endfor %}
+                  </div>
 
-              </div>
+              <!-- User's faved playable images (pre-analyzed) -->
+                  <div id="faved-playables" style="display: none;">
+                  {% for img in faved_imgs %}
+                    <div class="image-container">
+                    <!-- Set image source -->
+                    <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
+                    <!-- Heart button images if user_id in session -->
+                    {% if 'user_id' in session %}
+                       <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span></button>
+                    {% endif %}
+                    </div>
+                  {% endfor %}
+                  </div>
 
             <!-- Public playable images (pre-analyzed) -->
-              <div id="public-playables">
-                {% for img in imgs %}
-                <div class="image-container">
-                  <!-- Set image source -->
-                  <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
-                  <!-- Heart button images if user_id in session -->
-                  {% if 'user_id' in session %}
-                    {% if img.has_loved(session['user_id']) %}
-                      <button class="heart-button" disabled><span class="glyphicon glyphicon-heart" aria-hidden="true" style="color: red;"></span></button>
-                    {% else %}
-                      <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' class="heart glyphicon glyphicon-heart" aria-hidden="true" style="color: pink;"></span></button>
+                <div id="public-playables">
+                  {% for img in imgs %}
+                  <div class="image-container">
+                    <!-- Set image source -->
+                    <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
+                    <!-- Heart button images if user_id in session -->
+                    {% if 'user_id' in session %}
+                        <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span></button>
                     {% endif %}
-                  {% endif %}
+                  </div>
+                  {% endfor %}
                 </div>
-                {% endfor %}
-              </div>
             </div>
           </div>
         </div>
@@ -118,11 +124,19 @@
         <div class="row">
           <div class="col-xs-12">
             <div id="uploadForm">
+              <p>Portrait style images with dark or black background recommended for best result. Images may not contain nudity, weapons, drugs, or alcohol.</p>
               <form action="/process-image" enctype="multipart/form-data" method="POST">
                 <input id="image-file" type="file" name="pic" accept="image/*"/>
                 <br>
-                <input type="radio" name="privacy" value="private"> Private
-                <input type="radio" name="privacy" value="public" checked> Public
+                {% if 'user_id' in session %}
+                  <p class="privacy_radio">Images set to private will only be visible to you while you are logged in.</p>
+                  <input class="privacy_radio" type="radio" name="privacy" value="private"> Private
+                  <input class="privacy_radio" type="radio" name="privacy" value="public"checked> Public
+                {% else %}
+                  <p class="privacy_radio" style="display: none;">Images set to private will only be visible to you while you are logged in.</p>
+                  <input class="privacy_radio" type="radio" name="privacy" value="private" style="display: none;">
+                  <input class="privacy_radio" type="radio" name="privacy" value="public" style="display: none;" checked>
+                {% endif %}
                 <br>
                 <input class="btn btn-primary" id="uploadImage" type="submit"/>
               </form>
@@ -147,9 +161,17 @@
       <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 id="canvas-modal-title" class="modal-title" id="canvasModalLabel">Draw Image</h4>
+
             <!-- Save and set privacy -->
-            <input type="radio" name="privacy" value="private"> Private
-            <input type="radio" name="privacy" value="public" checked> Public
+                {% if 'user_id' in session %}
+                  <p class="privacy_radio">Images set to private will only be visible to you while you are logged in.</p>
+                  <input class="privacy_radio" type="radio" name="privacy" value="private"> Private
+                  <input class="privacy_radio" type="radio" name="privacy" value="public"checked> Public
+                {% else %}
+                  <p class="privacy_radio" style="display: none;">Images set to private will only be visible to you while you are logged in.</p>
+                  <input class="privacy_radio" type="radio" name="privacy" value="private" style="display: none;">
+                  <input class="privacy_radio" type="radio" name="privacy" value="public" style="display: none;" checked>
+                {% endif %}
             <button class="btn btn-primary" id="saveCanvas" type="button">Save</button>
       </div>
       <div class="modal-body">
@@ -163,7 +185,7 @@
               </div>
             <div id="myCanvas">
               <!-- Canvas Element -->
-              <canvas id="canvas" width="400" height="600" style="border:1px solid #000000; background-color: black;"></canvas>
+              <canvas id="canvas" width="480" height="720" style="border:1px solid #000000; background-color: black;"></canvas>
             </div>
           </div>
         </div>

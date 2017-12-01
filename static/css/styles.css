@@ -37,6 +37,10 @@ body {
     padding-top: 5px !important;
 }
 
+.logout {
+    padding-top: 15px !important;
+}
+
 #selection {
     position: relative;
     margin: auto;
@@ -49,14 +53,14 @@ body {
 
 #stop {
     position: relative;
-    top: 0;
-    left: 0;
+    top: 645px;
+    left: 220px;
 }
 
 #play {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 645px;
+    left: 220px;
 }
 
 .parent {
@@ -89,6 +93,11 @@ body {
     will-change: left;
 }
 
+#top {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
 
 #animated-play {
     position: absolute;
@@ -118,12 +127,6 @@ body {
     /* Need to get left position and set */
     0% {left: 0;} 
     100%{left: 0;}
-}
-
-#top {
-    position: absolute;
-    top: 0;
-    left: 0;
 }
 
 /* Modal Content/Box */

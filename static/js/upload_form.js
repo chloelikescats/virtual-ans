@@ -23,12 +23,22 @@ $("#uploadImage").on('click', function(evt) {
             contentType: false,
             processData: false,
             success: function(results) {
+                if (results.error_message) {
+                    let message = results.error_message;
+                    let newMessage = `<ul style="list-style-type: none; color: magenta;"><li>${message}</li></ul>`;
+                    $("#messages").append(newMessage);
+                    setTimeout(function() {
+                        $('#messages').fadeOut('fast');
+                    }, 5000); 
+                } else {
+
                 let queueImg = document.querySelector("#queue");
                 let imgSrc = results['url'];
                 queueImg.setAttribute('src', imgSrc);
                 let imgId = results['id'];
                 $("#img_id_in").val(imgId);
                 addImageToModal(imgSrc, imgId, privacy);
+            }
         }
     });
 })

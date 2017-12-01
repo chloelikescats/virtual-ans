@@ -110,7 +110,7 @@ class User(db.Model):
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     email = db.Column(db.String(100), nullable=False)
-    password = db.Column(db.String(25), nullable=False)
+    password = db.Column(db.String(256), nullable=False)
 
     def __repr__(self):
         """Provide helpful object representation when printed."""

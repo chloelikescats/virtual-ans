@@ -9,6 +9,8 @@ from flask_debugtoolbar import DebugToolbarExtension
 from model import (connect_to_db, db, Frequency, Image, ImageColumn, Heart, User)
 from PIL import Image as PILimage
 import os
+import bcrypt
+from sightengine.client import SightengineClient
 UPLOAD_FOLDER = 'static/uploaded_images/'
 
 app = Flask(__name__)
@@ -21,9 +23,6 @@ app.jinja_env.undefined = StrictUndefined
 
 #*****************************************************#
 # Routes
-"""TO DO:
-
-"""
 
 @app.route('/')
 def index():
@@ -31,11 +30,13 @@ def index():
     if 'user_id' in session:
         user_id = session['user_id']
         user_imgs = Image.query.filter(Image.user_id == user_id).all()
+        faved_imgs = Image.query.filter(Heart.user_id == user_id).all()
     else:
         user_imgs = []
+        faved_imgs = []
 
     imgs = Image.query.filter(Image.private == False).all()
-    return render_template("homepage.html", imgs=imgs, user_imgs=user_imgs)
+    return render_template("homepage.html", imgs=imgs, user_imgs=user_imgs, faved_imgs=faved_imgs)
 
 
 @app.route('/about')
@@ -47,11 +48,23 @@ def about_page():
 @app.route('/heart-image', methods=['POST'])
 def like_process():
     """Processes user's like of specific image."""
+    print "Hi now I am in here"
     img_id = int(request.form['img_id'])
     heart = Heart(img_id=img_id, user_id=session['user_id'])
     db.session.add(heart)
     db.session.commit()
     return 'Thanks for liking me!'
+
+@app.route('/unheart-image', methods=['POST'])
+def unlike_process():
+    """Processes user's unlike of specific image."""
+    
+    img_id = int(request.form['img_id'])
+    unheart = Heart.query.filter(Heart.img_id == img_id, Heart.user_id == session['user_id']).first()
+    if unheart != None:
+        db.session.delete(unheart)
+        db.session.commit()
+    return "That's fine too!"
 
 
 @app.route('/frequencies.json')
@@ -81,15 +94,34 @@ def process_image():
     img_path = UPLOAD_FOLDER + img.filename
     img.save(img_path)
 
-    # Convert image and analyze, redirect to homepage
-    upload = convert_resize_image(img_path, privacy)
-    img_id = upload.img_id
-    img_url = upload.img_url
-    results = {"id": img_id, "url": img_url}
-    pillow_analyze_image(img_path)
+    #SightEngine check image for nudity/weapons/drugs
+    client = SightengineClient('860162422', 'eFiRDeywSC9mCCjXse5q')
+    output = client.check('nudity','wad').set_file(img_path)
+    print output
+    if output['weapon'] > 0.8:
+        message = "Weapons detected, please upload a different image."
+        print("NO WEAPONS")
+        return jsonify({'error_message': message})
 
-    # Return results
-    return jsonify(results)
+    elif output['alcohol'] > 0.8:
+        message = "Drugs or alcohol detected, please upload a different image."
+        print("NO ALCOHOLS")
+        return jsonify({'error_message': message})
+
+    elif output['nudity']['raw'] > 0.5:
+        message = "Nudity detected, please upload a different image."
+        print("NO NAKEY PICS")
+        return jsonify({'error_message': message})
+
+    else:
+        # Convert image and analyze, redirect to homepage
+        upload = convert_resize_image(img_path, privacy)
+        img_id = upload.img_id
+        img_url = upload.img_url
+        results = {"id": img_id, "url": img_url}
+        pillow_analyze_image(img_path)
+        # Return results
+        return jsonify(results)
 
 
 @app.route('/process-canvas.json', methods=["POST"])
@@ -139,13 +171,16 @@ def process_registration():
     """Adds new user and redirects to homepage."""
     email = request.form.get("email")
     password = request.form.get("password")
+    password = password.encode("utf-8")
+
+    hashedpw = bcrypt.hashpw(password, bcrypt.gensalt())
 
     user = User.query.filter(User.email == email).first()
 
     if user:
         flash('That email address is already registered, please login')
         return redirect("/login")
-    new_user = User(email=email, password=password)
+    new_user = User(email=email, password=hashedpw)
     db.session.add(new_user)
     db.session.commit()
 
@@ -173,7 +208,10 @@ def process_login():
         flash('This email is not registered, please register.')
         return redirect("/register")
 
-    if user.password == password:
+    user_password = user.password.encode("utf-8")
+    password = password.encode("utf-8")
+
+    if bcrypt.checkpw(password, user_password):
         session['user_id'] = user.user_id
         flash('You have successfully logged in.')
         return redirect('/')
@@ -182,23 +220,14 @@ def process_login():
         return redirect("/login")
 
 
-@app.route("/logout", methods=["POST"])
+@app.route("/logout")
 def logout():
     """User account logout."""
-
     # delete user_id from session
     del session['user_id']
     flash('You have successfully logged out.')
 
     return redirect("/")
-
-@app.route("/user-page/<user_id>")
-def user_page(user_id):
-    """Show user details"""
-    user = User.query.filter(User.user_id == user_id).first()
-    return render_template("user-page.html",
-                            user_id=user_id)
-
 
 #*****************************************************#
 # Logic
@@ -230,19 +259,19 @@ def get_pixel_data(img_id):
     columns['column'] = column_list
     return columns
 
-#Not sure whether or not I want to constrain the width to specified width
-#right now I am scaling width based on set height
+
 def convert_resize_image(img_url, privacy):
     """Convert image to greyscale and resize before adding to db"""
     baseheight = 720
     img = PILimage.open(img_url).convert('L')
     height_percent = (baseheight / float(img.size[1]))
     width_size = int((float(img.size[0]) * float(height_percent)))
+    #If image is over 480px in width after scaling, crop width to 480px
+    if width_size > 480:
+        width_size = 480
     img = img.resize((width_size, baseheight), PILimage.ANTIALIAS)
     img.save(img_url)
 
-
-    #still need to set whether image is private or public
     if privacy == 'private':
         private = True
     else:
