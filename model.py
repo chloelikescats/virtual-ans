@@ -175,6 +175,28 @@ def calculate_semitones():
     db.session.commit() 
 
 
+def example_data():
+    """Create sample data for testing."""
+
+    # In case this is run more than once, empty out existing data
+    Frequency.query.delete()
+    Image.query.delete()
+    ImageColumn.query.delete()
+    Heart.query.delete()
+    User.query.delete()
+
+    # Add sample users and images/hearts
+    # Images/Hearts -- maybe I want to upload these instead 
+    # and test that all steps thereafter are happening
+
+    # Users
+    user1 = User(email='seymour_butts@gmail.com', password='123')
+    user2 = User(email='hugh_jarse@yahoo.com', password='password')
+    user3 = User(email='anne_arkey99@gmail.com', password='abc')
+
+    db.session.add_all([user1, user2, user3])
+    db.session.commit()
+
 if __name__ == "__main__":
     # As a convenience, if you run this module interactively, it will leave
     # you in a state of being able to work with the database directly.
