@@ -234,6 +234,7 @@ def logout():
 #*****************************************************#
 # Logic
 
+
 def get_freqs():
     """Get frequencies in hz out of frequencies."""
     table_freqs = Frequency.query.all()
@@ -295,6 +296,7 @@ def convert_resize_image(img_url, privacy):
         return new_img
     else:
         return db_img
+
 
 def pillow_analyze_image(img_url):
     """Analyze each pixel with Pillow and add data to image_columns"""
