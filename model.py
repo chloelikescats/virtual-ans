@@ -96,6 +96,7 @@ class Heart(db.Model):
                            order_by=heart_id
                            ))
 
+
     def __repr__(self):
         """Provide helpful object representation when printed."""
         return "<Heart heart_id=%s, img_id=%s, user_id=%s>" % (self.heart_id,
@@ -111,6 +112,8 @@ class User(db.Model):
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     email = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(256), nullable=False)
+
+    fave_imgs = db.relationship("Image", secondary="hearts")
 
     def __repr__(self):
         """Provide helpful object representation when printed."""

@@ -89,16 +89,22 @@ function clearCanvas() {
     clickY = new Array();
     clickDrag = new Array();
     context.beginPath();
+    $("#pen").removeAttr("disabled");
+    $("#eraser").removeAttr("disabled");
 }
 
 // Select Eraser Tool:
 document.getElementById('eraser').addEventListener('click', function() {
     curColor = colorBlack;
+    $("#eraser").attr('disabled', 'disabled');
+    $("#pen").removeAttr("disabled");
 });
 
 // Select Pen Tool:
 document.getElementById('pen').addEventListener('click', function() {
     curColor = colorWhite;
+    $("#pen").attr('disabled', 'disabled');
+    $("#eraser").removeAttr("disabled");
 });
 
 
@@ -115,8 +121,9 @@ document.getElementById('saveCanvas').addEventListener('click', function(){
     let file = new Blob([new Uint8Array(array)], {type: 'image/jpg'});
     let formData = new FormData();
     formData.append("myFileName", file);
-    let privacy = $("input[name='privacy']:checked").val();
+    let privacy = $("input[name='privacy1']:checked").val();
     formData.append('privacy', privacy);
+    debugger;
 
     $.ajax({
         type: 'POST',

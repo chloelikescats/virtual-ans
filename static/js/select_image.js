@@ -10,6 +10,9 @@ if (publicImages) {
     publicPlayables.style.display = "block";
     favedPlayables.style.display = "none";
     userPlayables.style.display = "none";
+    $("#publicImages").attr('disabled', 'disabled');
+    $("#userImages").removeAttr("disabled");
+    $("#favedImages").removeAttr("disabled");
   }
 }
 if (userImages) {
@@ -17,6 +20,9 @@ if (userImages) {
     userPlayables.style.display = "block";
     favedPlayables.style.display = "none";
     publicPlayables.style.display = "none";
+    $("#userImages").attr('disabled', 'disabled');
+    $("#publicImages").removeAttr("disabled");
+    $("#favedImages").removeAttr("disabled");
   }
 }
 if (favedImages) {
@@ -24,6 +30,9 @@ if (favedImages) {
     favedPlayables.style.display = "block";
     userPlayables.style.display = "none";
     publicPlayables.style.display = "none";
+    $("#favedImages").attr('disabled', 'disabled');
+    $("#publicImages").removeAttr("disabled");
+    $("#userImages").removeAttr("disabled");
   }
 }
 
@@ -35,6 +44,22 @@ if (favedImages) {
       queueImg.setAttribute('src', imgSrc);
       let imgId = $(this).attr("id");
       $("#img_id_in").val(imgId);
+      let formInputs = {
+        'img_id': $(this).attr("id"),
+      };
+      $.ajax({
+        type: 'POST',
+        url: '/analyze-queue-img',
+        data: formInputs,
+        contentType: false,
+        processData: false,
+        success: function(results) {
+          console.log(results);
+        }
+    });
+      // $.post("/analyze-queue-img", formInputs, function(results) {
+      //   console.log(results);
+      // });
   });
 
 
@@ -49,11 +74,68 @@ if (favedImages) {
       let that = this;
       $.post('/unheart-image', formInputs, function() {
       $(that).attr("style", "color: pink;");
+      //Remove image from fave-imgs div
       });
+
+
+      // function handleClickLike(evt) {
+      //    evt.preventDefault();
+      //    // add class unheart to button
+      //    let formInputs = {
+      //      'img_id': $(this).attr("id"),
+      //    };
+      //    if ($(this).css("color") === "rgb(255, 0, 0)") {
+      //      let that = this;
+      //      $(that).attr("style", "color: pink;");
+      //      $.post('/unheart-image', formInputs, $(document).ajaxComplete(function(data) {
+      //        //Remove image from fave-imgs div
+      //        let imgID = $(that).attr("id"); //Also needs to be in faved-img div
+      //        let selector = '.faved-playables' + String(imgID); 
+      //        // $(selector).css('display', 'none');
+      //        $(selector).hide();
+      //        console.log(selector);
+      //    }));
+
+      // $.post('/unheart-image', formInputs, function(data) {
+      //   $(that).attr("style", "color: pink;");
+      //   //Remove image from fave-imgs div
+      //   let imgID = $(that).attr("id"); //Also needs to be in faved-img div
+      //   let selector = 'img.faved-playables' + String(imgID); 
+      //   // $(selector).css('display', 'none');
+      //   $(selector).hide();
+      //   console.log(selector);
+      //   $(selector).remove();
+      // });
+
+    // $.ajax({
+      //   type: 'POST',
+      //   url: '/unheart-image',
+      //   data: formInputs,
+      //   contentType: false,
+      //   processData: false,
+      //   success: function() {
+      //     $(that).attr("style", "color: pink;");
+      //     let imgID = $(that).attr("id"); //Also needs to be in faved-img div
+      //     let selector = '.faved-playables' + String(imgID); 
+      //     console.log(selector);
+      //     console.log($(selector))
+      //     $(selector).remove();
+      //   }
+      // });
+
     } else {
       let that = this;
-      $.post('/heart-image', formInputs, function() { 
+      $.post('/heart-image', formInputs, function() {
       $(that).attr("style", "color: red;");
+      let imgID = $(that).attr("id");
+      let imgURL = $(that).data("imgUrl");
+        let newImg = `<div class="image-container">
+        <img src= ${ imgURL } class="playables faved-playables"+${ imgID } id= ${ imgID } height="200px">
+        <button class="heart-button" data-review-id='${ imgID }'>
+        <span id='${ imgID }' class="heart glyphicon glyphicon-heart" aria-hidden="true" style="color: red;"></span>
+        </button>
+        </div>`
+        $('#faved-playables').append($(newImg));
       });
     }
   }
@@ -67,9 +149,10 @@ if (favedImages) {
         <span id='${ imgID }' class="heart glyphicon glyphicon-heart" aria-hidden="true" style="color: pink;"></span>
         </button>
     </div>`
-    if (privacy == true) {
+    if (privacy == true || privacy == 'private') {
       $('#user-playables').append($(newImg));
     } else {
+      $('#user-playables').append($(newImg));
       $('#public-playables').append($(newImg));
     }
   }

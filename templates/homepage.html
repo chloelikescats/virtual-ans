@@ -3,35 +3,36 @@
 {% endblock %}
 
 {% block content %}
+<script>$('body').addClass('homepage');</script>
 
 <div id="selection">
   <!-- Select Image Modal Button -->
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".select-image-modal">Select Image</button>
+  <button type="button" class="btn btn-primary select-btn" data-toggle="modal" data-target=".select-image-modal">Select Image</button>
 
   <!-- Upload Image Modal Button -->
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".upload-image-modal">Upload Image</button>
+  <button type="button" class="btn btn-primary select-btn" data-toggle="modal" data-target=".upload-image-modal">Upload Image</button>
 
   <!-- Canvas Modal Button -->
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".canvas-modal">Draw Image</button>
+  <button type="button" class="btn btn-primary select-btn" data-toggle="modal" data-target=".canvas-modal">Draw Image</button>
 
 </div>
 
 <!-- The ANS Image Layers -->
 <div class="parent">
-  <img id="base" src="/static/images/base.png" height="750">
+  <img id="base" src="/static/images/base.png" height="700">
   <div id="animated-play">
-    <img class="target" id="mid" src="/static/images/mid.png" height="750">
-    <img class="target" id="queue" src="/static/images/black.png"  height="250px">
+    <img class="target" id="mid" src="/static/images/mid.png" height="700">
+    <img class="target" id="queue" src="/static/images/black.png"  height="230px">
   </div>
-  <img id="top" src="/static/images/top.png" height="750">
+  <img id="top" src="/static/images/top.png" height="700">
   <!-- Play button -->
   <form id="play" style="display: block;">
     <input type="hidden" id="img_id_in" name="img_id">
-    <input class="press_button" type="image" src="/static/images/play.png" value="submit" height="75">
+    <input class="press_button" type="image" src="/static/images/play.png" value="submit" height="70">
   </form>
   <!-- Show stop button on play button click -->
   <form id="stop" style="display: none;">
-    <input class="press_button" type="image" src="/static/images/stop.png" value="submit" height="75">
+    <input class="press_button" type="image" src="/static/images/stop.png" value="submit" height="70">
   </form>
 </div>
 
@@ -46,9 +47,9 @@
           <h4 class="modal-title" id="selectImageModalLabel">Select Image</h4>
             <!-- Private playable images -->
             {% if 'user_id' in session %}
-              <button id="userImages">Your Images</button>
-              <button id="favedImages">Faved Images</button>
-              <button id="publicImages">Public Images</button>
+              <button class="btn btn-primary" id="userImages">Your Images</button>
+              <button class="btn btn-primary" id="favedImages">Faved Images</button>
+              <button class="btn btn-primary" id="publicImages" disabled>Public Images</button>
             {% endif %}
         </div>
           <div class="modal-body">
@@ -63,7 +64,7 @@
                     <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
                     <!-- Heart button images if user_id in session -->
                     {% if 'user_id' in session %}
-                       <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span></button>
+                       <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' data-img-url="{{ img.img_url }}" class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span></button>
                     {% endif %}
                     </div>
                   {% endfor %}
@@ -72,12 +73,12 @@
               <!-- User's faved playable images (pre-analyzed) -->
                   <div id="faved-playables" style="display: none;">
                   {% for img in faved_imgs %}
-                    <div class="image-container">
+                    <div id="faved-playables" class="image-container">
                     <!-- Set image source -->
                     <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
                     <!-- Heart button images if user_id in session -->
                     {% if 'user_id' in session %}
-                       <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span></button>
+                       <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' data-img-url="{{ img.img_url }}" class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span></button>
                     {% endif %}
                     </div>
                   {% endfor %}
@@ -91,7 +92,7 @@
                     <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
                     <!-- Heart button images if user_id in session -->
                     {% if 'user_id' in session %}
-                        <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span></button>
+                        <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' data-img-url="{{ img.img_url }}" class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span></button>
                     {% endif %}
                   </div>
                   {% endfor %}
@@ -165,12 +166,12 @@
             <!-- Save and set privacy -->
                 {% if 'user_id' in session %}
                   <p class="privacy_radio">Images set to private will only be visible to you while you are logged in.</p>
-                  <input class="privacy_radio" type="radio" name="privacy" value="private"> Private
-                  <input class="privacy_radio" type="radio" name="privacy" value="public"checked> Public
+                  <input class="privacy_radio" type="radio" name="privacy1" value="private"> Private
+                  <input class="privacy_radio" type="radio" name="privacy1" value="public"checked> Public
                 {% else %}
                   <p class="privacy_radio" style="display: none;">Images set to private will only be visible to you while you are logged in.</p>
-                  <input class="privacy_radio" type="radio" name="privacy" value="private" style="display: none;">
-                  <input class="privacy_radio" type="radio" name="privacy" value="public" style="display: none;" checked>
+                  <input class="privacy_radio" type="radio" name="privacy1" value="private" style="display: none;">
+                  <input class="privacy_radio" type="radio" name="privacy1" value="public" style="display: none;" checked>
                 {% endif %}
             <button class="btn btn-primary" id="saveCanvas" type="button">Save</button>
       </div>
@@ -180,12 +181,22 @@
             <!-- Canvas tools -->
               <div id="canvas-tools">
                 <button class="btn btn-primary" id="clearCanvas" type="button">Clear</button>
-                <button class="btn btn-primary" id="pen" type="button">Pen</button>
+                <button class="btn btn-primary" id="pen" type="button" disabled>Pen</button>
                 <button class="btn btn-primary" id="eraser" type="button">Eraser</button>
               </div>
             <div id="myCanvas">
               <!-- Canvas Element -->
               <canvas id="canvas" width="480" height="720" style="border:1px solid #000000; background-color: black;"></canvas>
+              <!-- X Axis Labels -->
+              <p class="x-axis" id="high-label">HIGH</p>
+              <p class="x-axis" id="freq-label">---FREQUENCY---</p>
+              <p class="x-axis" id="low-label">LOW</p>
+              <!-- Octave Guide -->
+              <img id="octaveGuide" src="/static/images/ansoctaveguide.png" height="620" width="35px">
+              <!-- Y Axis Labels -->
+              <p class="y-axis" id="start-label">START</p>
+              <p class="y-axis" id="time-label">---TIME---</p>
+              <p class="y-axis" id="end-label">END</p>
             </div>
           </div>
         </div>
@@ -196,7 +207,6 @@
 
 <!-- Canvas and Modal Scripts -->
 <script src="/static/js/drawing_canvas.js"></script>
-
 
 <script src="/static/js/flocking/flocking-all.js"></script>
 <script src="/static/js/virtual_ans.js"></script>

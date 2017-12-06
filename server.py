@@ -32,11 +32,12 @@ def index():
     if 'user_id' in session:
         user_id = session['user_id']
         user_imgs = Image.query.filter(Image.user_id == user_id).all()
-        faved_imgs = Image.query.filter(Heart.user_id == user_id).all()
+        faved_imgs = User.query.get(user_id).fave_imgs
     else:
         user_imgs = []
         faved_imgs = []
-
+    print user_imgs
+    print faved_imgs
     imgs = Image.query.filter(Image.private == False).all()
     return render_template("homepage.html", imgs=imgs, user_imgs=user_imgs, faved_imgs=faved_imgs)
 
@@ -74,6 +75,22 @@ def jsonify_freqs():
     """Jsonify frequencies for Flocking"""
     frequencies = get_freqs()
     return jsonify(frequencies)
+
+
+@app.route('/analyze-queue-img', methods=['GET', 'POST'])
+def analyze_queue_img():
+    img_id = int(request.form['img_id'])
+    print img_id + "Hi!!"
+    queue_img = Image.query.filter(Image.img_id == img_id).first()
+    img_url = queue_img.img_url
+    img = PILimage.open(img_url)
+    extrema = img.convert("L").getextrema()
+    if extrema == (0, 0):
+        # all black
+        return "not today"
+    elif extrema == (1, 1):
+        # all white
+        return "mighty fine cup of coffee"
 
 
 @app.route('/pixel_data.json')
@@ -131,15 +148,21 @@ def process_canvas():
     """Convert and Analyze image from Canvas, add to DB"""
     img = request.files['myFileName']
     privacy = request.form.get("privacy")
-
+    
     if 'user_id' in session:
         user_id = session['user_id']
     else:
         user_id = None
 
+    if privacy == "private":
+        privacy = True
+    else:
+        privacy = False
+    
     # Add DB record with dummy URL
     new_img_record = Image(user_id=user_id,
-                           img_url="")
+                           img_url="",
+                           private=privacy)
     db.session.add(new_img_record)
     db.session.commit()
     # Set the filename
@@ -333,9 +356,9 @@ def pillow_analyze_image(img_url):
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
-    # app.debug = True
+    app.debug = True
     # make sure templates, etc. are not cached in debug mode
-    # app.jinja_env.auto_reload = app.debug  
+    app.jinja_env.auto_reload = app.debug  
 
     connect_to_db(app)
 

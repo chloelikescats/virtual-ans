@@ -28,128 +28,128 @@ class FlaskTestsBasic(TestCase):
         self.assertIn("photoelectronic musical instrument", result.data)
 
 
-class ServerHelperFunctions(TestCase):
-    """Tests server helper functions using the database."""
+# class ServerHelperFunctions(TestCase):
+#     """Tests server helper functions using the database."""
 
-    def setUp(self):
-        """Do before every test."""
-        # Get the Flask test client:
-        self.client = app.test_client()
+#     def setUp(self):
+#         """Do before every test."""
+#         # Get the Flask test client:
+#         self.client = app.test_client()
 
-        # Show Flask errors that happen during tests:
-        app.config['TESTING'] = True
+#         # Show Flask errors that happen during tests:
+#         app.config['TESTING'] = True
 
-        # Connect to test database:
-        connect_to_db(app, "postgresql:///testdb")
+#         # Connect to test database:
+#         connect_to_db(app, "postgresql:///testdb")
 
-        # Create tables and add sample data:
-        db.create_all()
-        example_data()
+#         # Create tables and add sample data:
+#         db.create_all()
+#         example_data()
 
-    def tearDown(self):
-        """Do at end of every test."""
-        db.session.close()
-        db.drop_all()
+#     def tearDown(self):
+#         """Do at end of every test."""
+#         db.session.close()
+#         db.drop_all()
 
-    def test_get_freqs(self):
-        """Test get_freqs helper function."""
-        frequencies = server.get_freqs()
-        assert len(frequencies) == 120
+#     def test_get_freqs(self):
+#         """Test get_freqs helper function."""
+#         frequencies = server.get_freqs()
+#         assert len(frequencies) == 120
 
-    def test_get_pixel_data(self):
-        """Test get_pixel_data helper function."""
-        columns = server.get_pixel_data()
-        pass
-
-
-class FlaskTestsDatabase(TestCase):
-    """Flask tests that use the database."""
-
-    def setUp(self):
-        """Do before every test."""
-        # Get the Flask test client:
-        self.client = app.test_client()
-
-        # Show Flask errors that happen during tests:
-        app.config['TESTING'] = True
-
-        # Connect to test database:
-        connect_to_db(app, "postgresql:///testdb")
-
-        # Create tables and add sample data:
-        db.create_all()
-        example_data()
-
-    def tearDown(self):
-        """Do at end of every test."""
-        db.session.close()
-        db.drop_all()
+#     def test_get_pixel_data(self):
+#         """Test get_pixel_data helper function."""
+#         columns = server.get_pixel_data()
+#         pass
 
 
-class FlaskTestsLoggedIn(TestCase):
-    """Flask tests with user logged into session."""
+# class FlaskTestsDatabase(TestCase):
+#     """Flask tests that use the database."""
 
-    def setup(self):
-        """Do before every test."""
-        app.config['TESTING'] = True
-        app.config['SECRET_KEY'] = 'SECRET'
-        self.client = app.test_client()
+#     def setUp(self):
+#         """Do before every test."""
+#         # Get the Flask test client:
+#         self.client = app.test_client()
 
-        with self.client as c:
-            with c.session_transaction() as session:
-                session['user_id'] = 1
+#         # Show Flask errors that happen during tests:
+#         app.config['TESTING'] = True
 
-    def test_logged_in_homepage(self):
-        """Test that user can see important homepage elements when logged in."""
-        result = self.client.get("/", follow_redirects=True)
-        self.assertNotIn("Log In", result.data)
-        self.assertIn("Log Out", result.data)
+#         # Connect to test database:
+#         connect_to_db(app, "postgresql:///testdb")
 
+#         # Create tables and add sample data:
+#         db.create_all()
+#         example_data()
 
-class FlaskTestsLoggedOut(TestCase):
-    """Flask tests with user logged out of session."""
-
-    def setUp(self):
-        """Do before every test."""
-        app.config['TESTING'] = True
-        self.client = app.test_client()
-
-    def test_logged_out_homepage(self):
-        """Test that user can see important homepage elements when logged out."""
-        result = self.client.get("/", follow_redirects=True)
-        self.assertNotIn("Log Out", result.data)
-        self.assertIn("Log In", result.data)
+#     def tearDown(self):
+#         """Do at end of every test."""
+#         db.session.close()
+#         db.drop_all()
 
 
-class FlaskTestsLogInLogOut(TestCase):
-    """Test log in and log out."""
+# class FlaskTestsLoggedIn(TestCase):
+#     """Flask tests with user logged into session."""
 
-    def setUp(self):
-        """Do before every test."""
-        app.config['TESTING'] = True
-        self.client = app.test_client()
+#     def setup(self):
+#         """Do before every test."""
+#         app.config['TESTING'] = True
+#         app.config['SECRET_KEY'] = 'SECRET'
+#         self.client = app.test_client()
 
-    def test_login(self):
-        """Test log in form."""
-        with self.client as c:
-            result = c.post("/login",
-                            data={'email': 'hugh_jarse@yahoo.com',
-                                  'password': 'password'},
-                            follow_redirects=True
-                            )
-            self.assertEqual(session['user_id'], '2')
-            self.assertIn("successfully logged in.", result.data)
+#         with self.client as c:
+#             with c.session_transaction() as session:
+#                 session['user_id'] = 1
 
-    def test_logout(self):
-        """Test log out route."""
-        with self.client as c:
-            with c.session_transaction() as session:
-                session['user_id'] = '2'
+#     def test_logged_in_homepage(self):
+#         """Test that user can see important homepage elements when logged in."""
+#         result = self.client.get("/", follow_redirects=True)
+#         self.assertNotIn("Log In", result.data)
+#         self.assertIn("Log Out", result.data)
 
-                result = self.client.get('/logout', follow_redirects=True)
 
-                self.assertNotIn('user_id', session)
-                self.assertIn('successfully logged out.', result.data)
+# class FlaskTestsLoggedOut(TestCase):
+#     """Flask tests with user logged out of session."""
+
+#     def setUp(self):
+#         """Do before every test."""
+#         app.config['TESTING'] = True
+#         self.client = app.test_client()
+
+#     def test_logged_out_homepage(self):
+#         """Test that user can see important homepage elements when logged out."""
+#         result = self.client.get("/", follow_redirects=True)
+#         self.assertNotIn("Log Out", result.data)
+#         self.assertIn("Log In", result.data)
+
+
+# class FlaskTestsLogInLogOut(TestCase):
+#     """Test log in and log out."""
+
+#     def setUp(self):
+#         """Do before every test."""
+#         app.config['TESTING'] = True
+#         self.client = app.test_client()
+
+#     def test_login(self):
+#         """Test log in form."""
+#         with self.client as c:
+#             result = c.post("/login",
+#                             data={'email': 'hugh_jarse@yahoo.com',
+#                                   'password': 'password'},
+#                             follow_redirects=True
+#                             )
+#             self.assertEqual(session['user_id'], '2')
+#             self.assertIn("successfully logged in.", result.data)
+
+#     def test_logout(self):
+#         """Test log out route."""
+#         with self.client as c:
+#             with c.session_transaction() as session:
+#                 session['user_id'] = '2'
+
+#                 result = self.client.get('/logout', follow_redirects=True)
+
+#                 self.assertNotIn('user_id', session)
+#                 self.assertIn('successfully logged out.', result.data)
 
 
 if __name__ == "__main__":

@@ -1,12 +1,20 @@
 body {
-    /*background-color: #F9D749 !important;*/
-    background: linear-gradient(to right, #FCDC67, #EDB500);
+    background: #FFCF23;
     font-family: 'Russo One', sans-serif !important;
+}
+
+.homepage {
+    background-color: black !important;
+    background-size: cover !important;
+    background-image: url(../images/bg.jpg) !important;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .navbar {
     background-color: #2D2D2D !important;
-    border-color: #8A4134 !important;
+    border-color: #EDB500 !important;
 }
 
 .navbar-brand {
@@ -44,23 +52,32 @@ body {
 #selection {
     position: relative;
     margin: auto;
-    width: 30%;
+    padding-left: 150px;
+    width: 50%;
+    margin-top: -10px;
+    margin-bottom: -30px;
+    z-index: 20;
+}
+
+.select-btn {
+    margin: 5px !important;
 }
 
 .btn-primary, .btn-de:hover, .btn-primary:active, .btn-primary:visited {
-    background-color: #A01809 !important;
+    background-color: black !important;
+    border-color: #2D2D2D;
 }
 
 #stop {
     position: relative;
-    top: 645px;
-    left: 220px;
+    top: 605px;
+    left: 200px;
 }
 
 #play {
     position: absolute;
-    top: 645px;
-    left: 220px;
+    top: 605px;
+    left: 200px;
 }
 
 .parent {
@@ -68,7 +85,7 @@ body {
     top: 0;
     left: 0;
     margin: auto;
-    width: 50%;
+    width:45%;
 }
 
 #base {
@@ -80,15 +97,15 @@ body {
 #mid {
     position: absolute;
     top: 0;
-    left: 0;
+    left: -5px;
     will-changge: contents;
     will-change: left;
 }
 
 #queue {
     position: absolute;
-    top: 121px;
-    left: 305px;
+    top: 115px;
+    left: 285px;
     will-change: contents;
     will-change: left;
 }
@@ -111,7 +128,7 @@ body {
 
 @keyframes playAnimation {
     0% {left: 0;}
-    100% {left: -180px;}
+    100% {left: -190px;}
 }
 
 #animated-reset {
@@ -180,6 +197,55 @@ body {
 #canvas-tools {
     margin: auto;
     width: 25%;
+}
+
+#octaveGuide {
+    position: relative;
+    top: -670px;
+    left: -35px;
+    margin-bottom: -645px;
+}
+
+.y-axis {
+    position: relative;
+    display: inline-block;
+}
+
+.x-axis {
+    position: relative;
+    display: inline-block;
+    transform: rotate(-90deg);
+    transform-origin: left top 0;
+}
+
+#high-label {
+    top: -610px;
+    left: 140px;
+}
+
+#freq-label {
+    top: -300px;
+    left: 100px;
+}
+
+#low-label {
+    top: -30px;
+    left: -20px;
+}
+
+#start-label {
+    top: -20px;
+    left: -35px;
+}
+
+#time-label {
+    top: -20px;
+    left: 80px;
+}
+
+#end-label {
+    top: -20px;
+    left: 215px;
 }
 
 .carousel-inner img {

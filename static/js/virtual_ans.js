@@ -40,6 +40,7 @@ function generateSynths(result) {
 }
 
 
+
 //250 at a time seems to be the functional limit of the environment
 // I will want to divide by octave and have seperate play functions with bp filters?
 
@@ -50,7 +51,7 @@ $("#play").on("submit", getJSON);
 function getJSON(evt) {
     $('#play').css("display", "none");
     $('#stop').css("display", "block");
-    $('#stop').css("top", "648px");
+    $('#stop').css("top", "608px");
     evt.preventDefault();
     let imgId = $("#img_id_in").val();
     $.get("/pixel_data.json", {"img_id": imgId}, playSynths);
@@ -66,7 +67,7 @@ function playSynths(result) {
     let columnNum = 0;
 
     // Get image duration for CSS Animation
-    let timePerPixel = 250;
+    let timePerPixel = 230;
     let pixelWidth = columnArray.length;
     let imgDuration = (pixelWidth * timePerPixel) / 1000;
 
