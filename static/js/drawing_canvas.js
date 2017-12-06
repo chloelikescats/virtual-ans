@@ -103,8 +103,6 @@ document.getElementById('eraser').addEventListener('click', function() {
 // Select Pen Tool:
 document.getElementById('pen').addEventListener('click', function() {
     curColor = colorWhite;
-    $("#pen").attr('disabled', 'disabled');
-    $("#eraser").removeAttr("disabled");
 });
 
 
