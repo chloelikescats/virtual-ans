@@ -74,27 +74,22 @@ if (favedImages) {
       let that = this;
       $.post('/unheart-image', formInputs, function() {
       $(that).attr("style", "color: pink;");
+      img_id = formInputs['img_id'];
+      $(("#" + String(img_id))).remove();
+      $(that).remove();
+      $()
+    })}
+
       //Remove image from fave-imgs div
-      });
-
-
-      // function handleClickLike(evt) {
-      //    evt.preventDefault();
-      //    // add class unheart to button
-      //    let formInputs = {
-      //      'img_id': $(this).attr("id"),
-      //    };
-      //    if ($(this).css("color") === "rgb(255, 0, 0)") {
-      //      let that = this;
-      //      $(that).attr("style", "color: pink;");
-      //      $.post('/unheart-image', formInputs, $(document).ajaxComplete(function(data) {
-      //        //Remove image from fave-imgs div
-      //        let imgID = $(that).attr("id"); //Also needs to be in faved-img div
-      //        let selector = '.faved-playables' + String(imgID); 
-      //        // $(selector).css('display', 'none');
-      //        $(selector).hide();
-      //        console.log(selector);
-      //    }));
+  
+         //   $.post('/unheart-image', formInputs, $(document).ajaxComplete(function(data) {
+         //     //Remove image from fave-imgs div
+         //     let imgID = $(that).attr("id"); //Also needs to be in faved-img div
+         //     let selector = '.faved-playables' + String(imgID); 
+         //     // $(selector).css('display', 'none');
+         //     $(selector).hide();
+         //     console.log(selector);
+         // });
 
       // $.post('/unheart-image', formInputs, function(data) {
       //   $(that).attr("style", "color: pink;");
@@ -123,7 +118,7 @@ if (favedImages) {
       //   }
       // });
 
-    } else {
+     else {
       let that = this;
       $.post('/heart-image', formInputs, function() {
       $(that).attr("style", "color: red;");
