@@ -43,13 +43,24 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
           <h4 class="modal-title" id="selectImageModalLabel">Select Image</h4>
             <!-- Private playable images -->
             {% if 'user_id' in session %}
-              <button class="btn btn-primary" id="userImages">Your Images</button>
-              <button class="btn btn-primary" id="favedImages">Faved Images</button>
-              <button class="btn btn-primary" id="publicImages" disabled>Public Images</button>
+              <!-- User Images Button in Modal -->
+              <button class="btn btn-primary" id="userImages">Your Images
+              </button>
+
+              <!-- Faved Images Button in Modal -->
+              <button class="btn btn-primary" id="favedImages">Faved Images
+              </button>
+
+              <!-- Public Images Button in Modal -->
+              <button class="btn btn-primary" id="publicImages">Public Images
+              </button>
+
             {% endif %}
         </div>
           <div class="modal-body">
@@ -61,10 +72,12 @@
                   {% for img in user_imgs %}
                     <div class="image-container">
                     <!-- Set image source -->
-                    <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
+                    <img src={{ img.img_url }} class="playables" data-img-id={{ img.img_id }} height="200px">
                     <!-- Heart button images if user_id in session -->
                     {% if 'user_id' in session %}
-                       <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' data-img-url="{{ img.img_url }}" class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span></button>
+                      <button class="heart-button" data-review-id='{{ img.img_id }}'>
+                        <span id='your-{{ img.img_id }}' data-img-id='{{ img.img_id }}' data-img-url="{{ img.img_url }}" class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span>
+                      </button>
                     {% endif %}
                     </div>
                   {% endfor %}
@@ -73,12 +86,14 @@
               <!-- User's faved playable images (pre-analyzed) -->
                   <div id="faved-playables" style="display: none;">
                   {% for img in faved_imgs %}
-                    <div id="faved-playables" class="image-container">
+                    <div id='faved-div-{{ img.img_id }}' class="image-container">
                     <!-- Set image source -->
-                    <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
+                    <img src={{ img.img_url }} class="playables" data-img-id={{ img.img_id }} height="200px">
                     <!-- Heart button images if user_id in session -->
                     {% if 'user_id' in session %}
-                       <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' data-img-url="{{ img.img_url }}" class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span></button>
+                       <button class="heart-button"  data-review-id='{{ img.img_id }}'>
+                          <span id='faved-{{ img.img_id }}' data-img-id='{{ img.img_id }}' data-img-url="{{ img.img_url }}" class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span>
+                       </button>
                     {% endif %}
                     </div>
                   {% endfor %}
@@ -89,10 +104,12 @@
                   {% for img in imgs %}
                   <div class="image-container">
                     <!-- Set image source -->
-                    <img src={{ img.img_url }} class="playables" id={{ img.img_id }} height="200px">
+                    <img src={{ img.img_url }} class="playables" data-img-id={{ img.img_id }} height="200px">
                     <!-- Heart button images if user_id in session -->
                     {% if 'user_id' in session %}
-                        <button class="heart-button" data-review-id='{{ img.img_id }}'><span id='{{ img.img_id }}' data-img-url="{{ img.img_url }}" class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span></button>
+                        <button class="heart-button" data-review-id='{{ img.img_id }}'>
+                          <span id='public-{{ img.img_id }}' data-img-id='{{ img.img_id }}' data-img-url="{{ img.img_url }}" class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span>
+                        </button>
                     {% endif %}
                   </div>
                   {% endfor %}

@@ -68,82 +68,50 @@ if (favedImages) {
     evt.preventDefault();
     // add class unheart to button
     let formInputs = {
-      'img_id': $(this).attr("id"),
+      'img_id': $(this).data("img-id"),
     };
+    // if color red
     if ($(this).css("color") === "rgb(255, 0, 0)") {
-      let that = this;
+      let thisHeart = this;
       $.post('/unheart-image', formInputs, function() {
-      $(that).attr("style", "color: pink;");
-      img_id = formInputs['img_id'];
-      $(("#" + String(img_id))).remove();
-      $(that).remove();
-      $()
+
+        let img_id = formInputs['img_id'];
+
+        $(img_id).attr("style", "color: pink;");
+        $("#your-" + img_id).attr("style", "color: pink;");
+        $("#public-" + img_id).attr("style", "color: pink;");
+        // If image in faved div, remove
+        $(("#faved-div-" + img_id)).remove();
     })}
 
-      //Remove image from fave-imgs div
-  
-         //   $.post('/unheart-image', formInputs, $(document).ajaxComplete(function(data) {
-         //     //Remove image from fave-imgs div
-         //     let imgID = $(that).attr("id"); //Also needs to be in faved-img div
-         //     let selector = '.faved-playables' + String(imgID); 
-         //     // $(selector).css('display', 'none');
-         //     $(selector).hide();
-         //     console.log(selector);
-         // });
-
-      // $.post('/unheart-image', formInputs, function(data) {
-      //   $(that).attr("style", "color: pink;");
-      //   //Remove image from fave-imgs div
-      //   let imgID = $(that).attr("id"); //Also needs to be in faved-img div
-      //   let selector = 'img.faved-playables' + String(imgID); 
-      //   // $(selector).css('display', 'none');
-      //   $(selector).hide();
-      //   console.log(selector);
-      //   $(selector).remove();
-      // });
-
-    // $.ajax({
-      //   type: 'POST',
-      //   url: '/unheart-image',
-      //   data: formInputs,
-      //   contentType: false,
-      //   processData: false,
-      //   success: function() {
-      //     $(that).attr("style", "color: pink;");
-      //     let imgID = $(that).attr("id"); //Also needs to be in faved-img div
-      //     let selector = '.faved-playables' + String(imgID); 
-      //     console.log(selector);
-      //     console.log($(selector))
-      //     $(selector).remove();
-      //   }
-      // });
-
-     else {
+    else {
       let that = this;
       $.post('/heart-image', formInputs, function() {
       $(that).attr("style", "color: red;");
-      let imgID = $(that).attr("id");
-      let imgURL = $(that).data("imgUrl");
-        let newImg = `<div class="image-container">
-        <img src= ${ imgURL } class="playables faved-playables"+${ imgID } id= ${ imgID } height="200px">
-        <button class="heart-button" data-review-id='${ imgID }'>
-        <span id='${ imgID }' class="heart glyphicon glyphicon-heart" aria-hidden="true" style="color: red;"></span>
-        </button>
-        </div>`
+      let imgID = $(that).data("img-id");
+      let imgURL = $(that).data("img-url");
+        let newImg = `<div id='faved-div-${ imgID }' class="image-container">
+                        <img src='${ imgURL }' class="playables" data-img-id='${ imgID }' height="200px">
+                        <button class="heart-button" data-review-id='${ imgID }'>
+                          <span id='faved-${ imgID }' data-img-id='${ imgID }' class="heart glyphicon glyphicon-heart" aria-hidden="true" style="color: red;"></span>
+                        </button>
+                      </div>`
+
         $('#faved-playables').append($(newImg));
       });
     }
   }
+
   $(document).on('click', '.heart', handleClickLike);
 
 
   function addImageToModal(imgURL, imgID, privacy) {
     let newImg = `<div class="image-container">
-    <img src= ${ imgURL } class="playables" id= ${ imgID } height="200px">
-        <button class="heart-button" data-review-id='${ imgID }'>
-        <span id='${ imgID }' class="heart glyphicon glyphicon-heart" aria-hidden="true" style="color: pink;"></span>
-        </button>
-    </div>`
+                    <img src='${ imgURL }' class="playables" data-img-id='${ imgID }' height="200px">
+                    <button class="heart-button" data-review-id='${ imgID }'>
+                      <span data-img-id='${ imgID }' class="heart glyphicon glyphicon-heart" aria-hidden="true" style="color: pink;"></span>
+                    </button>
+                  </div>`
     if (privacy == true || privacy == 'private') {
       $('#user-playables').append($(newImg));
     } else {
