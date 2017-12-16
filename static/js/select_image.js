@@ -42,10 +42,10 @@ if (favedImages) {
       let queueImg = document.querySelector("#queue");
       let imgSrc = $(this).attr("src")
       queueImg.setAttribute('src', imgSrc);
-      let imgId = $(this).attr("id");
+      let imgId = $(this).data("img-id");
       $("#img_id_in").val(imgId);
       let formInputs = {
-        'img_id': $(this).attr("id"),
+        'img_id': $(this).data("img-id"),
       };
       $.ajax({
         type: 'POST',
