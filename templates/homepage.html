@@ -91,7 +91,7 @@
                     <img src={{ img.img_url }} class="playables" data-img-id={{ img.img_id }} height="200px">
                     <!-- Heart button images if user_id in session -->
                     {% if 'user_id' in session %}
-                       <button class="heart-button"  data-review-id='{{ img.img_id }}'>
+                       <button class="heart-button" data-review-id='{{ img.img_id }}'>
                           <span id='faved-{{ img.img_id }}' data-img-id='{{ img.img_id }}' data-img-url="{{ img.img_url }}" class="heart glyphicon glyphicon-heart" aria-hidden="true" {% if img.has_loved(session['user_id']) %} style="color: red;" {% else %} style="color: pink;" {% endif %}></span>
                        </button>
                     {% endif %}
