@@ -1,6 +1,6 @@
 Welcome to Virtual ANS, a virtual model of the ANS Synthesizer, a Soviet era visual synthesizer which translates images into sound. 
 
-[Try it out live on the web!](www.virtualans.party)
+[Try it out live on the web!](http://virtualans.party)
 
 Click image to watch screencast demo of Virtual ANS on youtube:
 [![See a screencast of the Virtual ANS in action!](http://fluoglacial.com/wp-content/uploads/elektro-moskva-6.jpg)](https://youtu.be/2rjNuHptAco "Virtual ANS demo")
