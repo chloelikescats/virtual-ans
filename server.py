@@ -36,8 +36,8 @@ def index():
     else:
         user_imgs = []
         faved_imgs = []
-    print user_imgs
-    print faved_imgs
+    print(user_imgs)
+    print(faved_imgs)
     imgs = Image.query.filter(Image.private == False).all()
     return render_template("homepage.html", imgs=imgs, user_imgs=user_imgs, faved_imgs=faved_imgs)
 
@@ -51,7 +51,6 @@ def about_page():
 @app.route('/heart-image', methods=['POST'])
 def like_process():
     """Processes user's like of specific image."""
-    print "Hi now I am in here"
     img_id = int(request.form['img_id'])
     heart = Heart(img_id=img_id, user_id=session['user_id'])
     db.session.add(heart)
@@ -61,7 +60,6 @@ def like_process():
 @app.route('/unheart-image', methods=['POST'])
 def unlike_process():
     """Processes user's unlike of specific image."""
-    
     img_id = int(request.form['img_id'])
     unheart = Heart.query.filter(Heart.img_id == img_id, Heart.user_id == session['user_id']).first()
     if unheart != None:
@@ -80,7 +78,6 @@ def jsonify_freqs():
 @app.route('/analyze-queue-img', methods=['GET', 'POST'])
 def analyze_queue_img():
     img_id = int(request.form['img_id'])
-    print img_id + "Hi!!"
     queue_img = Image.query.filter(Image.img_id == img_id).first()
     img_url = queue_img.img_url
     img = PILimage.open(img_url)
@@ -116,7 +113,7 @@ def process_image():
     #SightEngine check image for nudity/weapons/drugs
     client = SightengineClient('860162422', 'eFiRDeywSC9mCCjXse5q')
     output = client.check('nudity','wad').set_file(img_path)
-    print output
+    # print(output)
     if output['weapon'] > 0.8:
         message = "Weapons detected, please upload a different image."
         print("NO WEAPONS")
@@ -148,7 +145,7 @@ def process_canvas():
     """Convert and Analyze image from Canvas, add to DB"""
     img = request.files['myFileName']
     privacy = request.form.get("privacy")
-    
+
     if 'user_id' in session:
         user_id = session['user_id']
     else:
@@ -158,7 +155,7 @@ def process_canvas():
         privacy = True
     else:
         privacy = False
-    
+
     # Add DB record with dummy URL
     new_img_record = Image(user_id=user_id,
                            img_url="",
@@ -186,7 +183,7 @@ def process_canvas():
 
 
 @app.route('/register', methods=["GET"])
-def register_form(): 
+def register_form():
     """Shows user registration form"""
     return render_template("registration.html")
 
@@ -358,7 +355,7 @@ if __name__ == "__main__":
     # point that we invoke the DebugToolbarExtension
     # app.debug = True
     # make sure templates, etc. are not cached in debug mode
-    # app.jinja_env.auto_reload = app.debug  
+    # app.jinja_env.auto_reload = app.debug
 
     connect_to_db(app)
 

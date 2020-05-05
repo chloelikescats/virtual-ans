@@ -140,10 +140,10 @@ def calculate_semitones():
             20.91,
             22.15,
             23.47,
-            24.86, 
+            24.86,
             26.34,
-            27.91, 
-            29.57, 
+            27.91,
+            29.57,
             31.33]
 
     for freq in base:
@@ -175,7 +175,7 @@ def calculate_semitones():
 
     for freq in over:
         db.session.add(Frequency(freq_hz=freq))
-    db.session.commit() 
+    db.session.commit()
 
 
 def example_data():
@@ -189,7 +189,7 @@ def example_data():
     User.query.delete()
 
     # Add sample users and images/hearts
-    # Images/Hearts -- maybe I want to upload these instead 
+    # Images/Hearts -- maybe I want to upload these instead
     # and test that all steps thereafter are happening
 
     # Users
@@ -206,8 +206,7 @@ if __name__ == "__main__":
 
     from server import app
     connect_to_db(app)
-    print "Connected to DB."
+    print("Connected to DB.")
 
     db.create_all()
     calculate_semitones()
-
