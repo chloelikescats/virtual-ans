@@ -332,7 +332,7 @@ def pillow_analyze_image(img_url):
 
         pixel_array = []
         morsel_size = 6
-        for i in xrange(0, len(undiv_pixel_array), morsel_size):
+        for i in range(0, len(undiv_pixel_array), morsel_size):
             morsel = undiv_pixel_array[i:i + morsel_size]
 
             morsel_sum = 0
