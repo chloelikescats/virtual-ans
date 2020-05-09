@@ -32,12 +32,11 @@ def index():
     if 'user_id' in session:
         user_id = session['user_id']
         user_imgs = Image.query.filter(Image.user_id == user_id).all()
-        faved_imgs = User.query.get(user_id).fave_imgs
+        faved_imgs = Image.query.filter(Heart.user_id == user_id).all()
     else:
         user_imgs = []
         faved_imgs = []
-    print(user_imgs)
-    print(faved_imgs)
+
     imgs = Image.query.filter(Image.private == False).all()
     return render_template("homepage.html", imgs=imgs, user_imgs=user_imgs, faved_imgs=faved_imgs)
 
@@ -57,6 +56,7 @@ def like_process():
     db.session.commit()
     return 'Thanks for liking me!'
 
+
 @app.route('/unheart-image', methods=['POST'])
 def unlike_process():
     """Processes user's unlike of specific image."""
@@ -75,25 +75,13 @@ def jsonify_freqs():
     return jsonify(frequencies)
 
 
-@app.route('/analyze-queue-img', methods=['GET', 'POST'])
-def analyze_queue_img():
-    img_id = int(request.form['img_id'])
-    queue_img = Image.query.filter(Image.img_id == img_id).first()
-    img_url = queue_img.img_url
-    img = PILimage.open(img_url)
-    extrema = img.convert("L").getextrema()
-    if extrema == (0, 0):
-        # all black
-        return "not today"
-    elif extrema == (1, 1):
-        # all white
-        return "mighty fine cup of coffee"
-
-
 @app.route('/pixel_data.json')
 def jsonify_pixel_data():
     """Get pixel data and jsonify"""
-    img_id = request.args.get("img_id")
+    img_id = int(request.args["img_id"])
+    print("-----------------------------")
+    print(img_id)
+    print("-----------------------------")
     pixel_data = get_pixel_data(img_id)
     return jsonify(pixel_data)
 
@@ -101,9 +89,7 @@ def jsonify_pixel_data():
 @app.route('/process-image.json', methods=["POST"])
 def process_image():
     """Convert and analyze image, add to DB"""
-    # privacy = request.form.get("privacy")
-    # img = request.files['pic']
-    privacy = request.form.get("privacy")
+    privacy = request.form["privacy"]
     img = request.files["img_file"]
 
     # Define path and save image to local directory
@@ -113,7 +99,7 @@ def process_image():
     #SightEngine check image for nudity/weapons/drugs
     client = SightengineClient('860162422', 'eFiRDeywSC9mCCjXse5q')
     output = client.check('nudity','wad').set_file(img_path)
-    # print(output)
+    print(output)
     if output['weapon'] > 0.8:
         message = "Weapons detected, please upload a different image."
         print("NO WEAPONS")
@@ -144,22 +130,16 @@ def process_image():
 def process_canvas():
     """Convert and Analyze image from Canvas, add to DB"""
     img = request.files['myFileName']
-    privacy = request.form.get("privacy")
+    privacy = request.form["privacy"]
 
     if 'user_id' in session:
         user_id = session['user_id']
     else:
         user_id = None
 
-    if privacy == "private":
-        privacy = True
-    else:
-        privacy = False
-
     # Add DB record with dummy URL
     new_img_record = Image(user_id=user_id,
-                           img_url="",
-                           private=privacy)
+                           img_url="")
     db.session.add(new_img_record)
     db.session.commit()
     # Set the filename
@@ -191,8 +171,8 @@ def register_form():
 @app.route('/register', methods=["POST"])
 def process_registration():
     """Adds new user and redirects to homepage."""
-    email = request.form.get("email")
-    password = request.form.get("password")
+    email = request.form["email"]
+    password = request.form["password"]
     password = password.encode("utf-8")
 
     hashedpw = bcrypt.hashpw(password, bcrypt.gensalt())
@@ -222,8 +202,8 @@ def login():
 def process_login():
     """Process user account login."""
 
-    email = request.form.get("email")
-    password = request.form.get("password")
+    email = request.form["email"]
+    password = request.form["password"]
 
     user = User.query.filter(User.email == email).first()
     if not user:
@@ -272,6 +252,7 @@ def get_freqs():
 def get_pixel_data(img_id):
     """Get pixel data for each image column out of image_columns"""
     image_columns = ImageColumn.query.filter(ImageColumn.img_id == img_id).all()
+    # image_columns = ImageColumn.query.filter(ImageColumn.img_id == img_id).all()
     columns = {}
     column_list = []
 
@@ -355,7 +336,7 @@ if __name__ == "__main__":
     # point that we invoke the DebugToolbarExtension
     app.debug = True
     # make sure templates, etc. are not cached in debug mode
-    # app.jinja_env.auto_reload = app.debug
+    app.jinja_env.auto_reload = app.debug
 
     connect_to_db(app)
 

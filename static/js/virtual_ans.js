@@ -9,7 +9,7 @@
 // - 2 "photocells" per octave
 // - 12 oscillators -> bandpass filter -> amplitude control
 // - 2 bandpass filters/amplitude controls per octave
-// */ 
+// */
 "use strict";
 //AJAX on page load to get frequencies
 $.get("/frequencies.json", generateSynths);
@@ -28,7 +28,7 @@ function generateSynths(result) {
         let sinOsc = {
 
                 synthDef: {
-                    ugen: "flock.ugen.sinOsc",
+                    ugen: "flock.ugen.squareOsc",
                     id: synth_id,
                     freq: frequencyArray[freq_hz],
                     mul: 0.0
@@ -139,5 +139,3 @@ function playPixelColumn(pixelColumn) {
         i+=1;
     }
 }
-
-
