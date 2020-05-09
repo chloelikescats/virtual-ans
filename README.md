@@ -1,5 +1,7 @@
 Welcome to Virtual ANS, a virtual model of the ANS Synthesizer, a Soviet era visual synthesizer which translates images into sound.
 
+Update 05-08-20: More or less functional again, with some rendering issues and lag.
+
 Unfortunately I've let this project lapse, so it is no longer live online. I am working to update and get it back up. Full time job and all. (shrug)
 
 Click image to watch screencast demo of Virtual ANS on youtube:
