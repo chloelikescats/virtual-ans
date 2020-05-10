@@ -1,8 +1,11 @@
-Welcome to Virtual ANS, a virtual model of the ANS Synthesizer, a Soviet era visual synthesizer which translates images into sound.
+Update 05-09-20: All working well again. Onto getting it live.
 
 Update 05-08-20: More or less functional again, with some rendering issues and lag.
 
-Unfortunately I've let this project lapse, so it is no longer live online. I am working to update and get it back up. Full time job and all. (shrug)
+Update 05-05-20: Unfortunately I've let this project lapse, so it is no longer live online. I am working to update and get it back up. Full time job and all. (shrug)
+
+
+Welcome to Virtual ANS, a virtual model of the ANS Synthesizer, a Soviet era visual synthesizer which translates images into sound.
 
 Click image to watch screencast demo of Virtual ANS on youtube:
 [![See a screencast of the Virtual ANS in action!](http://fluoglacial.com/wp-content/uploads/elektro-moskva-6.jpg)](https://youtu.be/2rjNuHptAco "Virtual ANS demo")
