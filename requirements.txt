@@ -9,10 +9,10 @@ Flask-DebugToolbar==0.11.0
 Flask-SQLAlchemy==2.4.1
 idna==2.9
 itsdangerous==1.1.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 MarkupSafe==1.1.1
 olefile==0.46
-Pillow==7.1.2
+Pillow==8.3.2
 postgres==3.0.0
 psycopg2-binary==2.8.5
 psycopg2-pool==1.1
